@@ -3,6 +3,7 @@ import { useSettingsStore } from '@/src/stores/settingsStore';
 import { useStatsStore } from '@/src/stores/statsStore';
 import { colors } from '@/src/theme/colors';
 import { pushStatsToWidget, subscribeWidgetToStats } from '@/src/widget/widgetBridge';
+import { inject } from '@vercel/analytics';
 import {
     Inter_400Regular,
     Inter_500Medium,
@@ -27,6 +28,8 @@ export const unstable_settings = {
 };
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
+
+inject();
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
@@ -58,6 +61,8 @@ export default function RootLayout() {
   }, [fontsLoaded]);
 
   if (!fontsLoaded) return null;
+
+  
 
   const navTheme = {
     ...DefaultTheme,
