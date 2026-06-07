@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tempo_widget_description">Quick access to Tempo focus sessions and today\'s progress.</string>
+    <string name="tempo_widget_label">Tempo Focus</string>
+</resources>

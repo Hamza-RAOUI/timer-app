@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tempo_widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/tempo_widget_background"
+    android:padding="14dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tempo_widget_brand"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="TEMPO"
+            android:textSize="11sp"
+            android:letterSpacing="0.18"
+            android:textStyle="bold"
+            android:textColor="#7DD3FC" />
+
+        <TextView
+            android:id="@+id/tempo_widget_streak"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0d"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#A6B0C8" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tempo_widget_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="00:00"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#F8FAFC"
+        android:fontFamily="monospace"
+        android:gravity="start" />
+
+    <TextView
+        android:id="@+id/tempo_widget_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Today’s focus"
+        android:textSize="12sp"
+        android:textColor="#A6B0C8" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <Button
+            android:id="@+id/tempo_widget_action_focus"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="36dp"
+            android:layout_marginEnd="6dp"
+            android:text="Focus"
+            android:textColor="#0B0E1A"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:background="@drawable/tempo_widget_button_primary" />
+
+        <Button
+            android:id="@+id/tempo_widget_action_timer"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="36dp"
+            android:text="Timer"
+            android:textColor="#F8FAFC"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:background="@drawable/tempo_widget_button_secondary" />
+    </LinearLayout>
+</LinearLayout>

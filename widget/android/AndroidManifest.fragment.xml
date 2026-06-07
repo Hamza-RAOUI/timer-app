@@ -1,0 +1,17 @@
+<!--
+  Drop these inside <application> in android/app/src/main/AndroidManifest.xml.
+  The Expo config plugin in widget/plugin/withTempoWidget.js inserts them
+  automatically during `expo prebuild`.
+-->
+<receiver
+    android:name="com.tempo.timerapp.widget.TempoWidgetProvider"
+    android:exported="true"
+    android:label="@string/tempo_widget_label">
+    <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="com.tempo.timerapp.widget.REFRESH" />
+    </intent-filter>
+    <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/tempo_widget_info" />
+</receiver>

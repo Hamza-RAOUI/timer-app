@@ -1,0 +1,6 @@
+{
+  "name": "with-tempo-widget",
+  "version": "1.0.0",
+  "main": "withTempoWidget.js",
+  "private": true
+}
