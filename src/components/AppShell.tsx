@@ -24,6 +24,8 @@ export const AppShell: React.FC = () => {
   const drawerOpen = useUiStore((s) => s.drawerOpen);
   const openDrawer = useUiStore((s) => s.openDrawer);
   const closeDrawer = useUiStore((s) => s.closeDrawer);
+  const collapsed = useUiStore((s) => s.sidebarCollapsed);
+  const toggleSidebar = useUiStore((s) => s.toggleSidebar);
   const isWide = width >= WIDE;
 
   const Content = (
@@ -38,10 +40,19 @@ export const AppShell: React.FC = () => {
     return (
       <View style={[styles.root, { paddingTop: insets.top }]}>
         <View style={[styles.wideRow]}>
-          <View style={[styles.sidebarWide, { paddingBottom: insets.bottom }]}>
-            <Sidebar />
+          {!collapsed && (
+            <View style={[styles.sidebarWide, { paddingBottom: insets.bottom }]}>
+              <Sidebar onCollapse={toggleSidebar} />
+            </View>
+          )}
+          <View style={styles.mainWide}>
+            {collapsed && (
+              <Pressable onPress={toggleSidebar} style={[styles.expandBtn, { top: 14 }]} accessibilityLabel="Expand sidebar">
+                <Ionicons name="menu" size={20} color={colors.text.primary} />
+              </Pressable>
+            )}
+            {Content}
           </View>
-          <View style={styles.mainWide}>{Content}</View>
         </View>
       </View>
     );
@@ -96,6 +107,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   menuBtn: { width: 42, height: 42, borderRadius: 13, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
+  expandBtn: { position: 'absolute', left: 16, zIndex: 10, width: 42, height: 42, borderRadius: 13, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, ...shadow.sm },
   topTitle: { fontFamily: fonts.heading, fontSize: 17, color: colors.text.primary },
   drawerRoot: { flex: 1, flexDirection: 'row' },
   drawerBackdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(15,23,42,0.3)' },

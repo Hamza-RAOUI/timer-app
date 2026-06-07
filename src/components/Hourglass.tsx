@@ -1,7 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
+import Animated, { Easing, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { ClipPath, Defs, G, Path, Rect } from 'react-native-svg';
 import { colors } from '../theme/colors';
+
+const AnimatedRect = Animated.createAnimatedComponent(Rect);
 
 interface HourglassProps {
   /** 0 = full top (just started) · 1 = drained (finished). */
@@ -23,15 +26,14 @@ export const Hourglass: React.FC<HourglassProps> = ({ progress, color = colors.a
   const topY = capH;
   const botY = TH - capH;
   const neckY = TH / 2;
-  const mx = W * 0.14; // bulb side margin
-  const nw = W * 0.16; // neck width
+  const mx = W * 0.14;
+  const nw = W * 0.16;
   const neckL = cx - nw / 2;
   const neckR = cx + nw / 2;
   const lx = mx;
   const rx = W - mx;
-  const cyl = (neckY - topY) * 0.55; // curve control distance
+  const cyl = (neckY - topY) * 0.55;
 
-  // Curved hourglass silhouette (concave sides pinching at the neck).
   const d = [
     `M${lx},${topY}`,
     `L${rx},${topY}`,
@@ -43,9 +45,25 @@ export const Hourglass: React.FC<HourglassProps> = ({ progress, color = colors.a
     'Z',
   ].join(' ');
 
-  const p = clamp(progress, 0, 1);
-  const surfaceY = topY + p * (neckY - topY); // top sand surface drops toward neck
-  const fillY = botY - p * (botY - neckY); // bottom pile rises from the base
+  // Smoothly follow the incoming progress instead of snapping every tick.
+  const p = useSharedValue(clamp(progress, 0, 1));
+  useEffect(() => {
+    p.value = withTiming(clamp(progress, 0, 1), { duration: 260, easing: Easing.linear });
+  }, [progress, p]);
+
+  const topProps = useAnimatedProps(() => {
+    const surfaceY = topY + p.value * (neckY - topY);
+    return { y: surfaceY, height: Math.max(0, neckY - surfaceY + 0.5) };
+  });
+  const bottomProps = useAnimatedProps(() => {
+    const fillY = botY - p.value * (botY - neckY);
+    return { y: fillY, height: Math.max(0, botY - fillY + 0.5) };
+  });
+  const streamProps = useAnimatedProps(() => {
+    const fillY = botY - p.value * (botY - neckY);
+    return { height: Math.max(0, fillY - neckY) };
+  });
+
   const capX = lx - 2;
   const capW = rx - lx + 4;
   const stroke = Math.max(2, size * 0.05);
@@ -59,17 +77,14 @@ export const Hourglass: React.FC<HourglassProps> = ({ progress, color = colors.a
           </ClipPath>
         </Defs>
 
-        {/* glass */}
         <Path d={d} fill="rgba(79,70,229,0.05)" />
 
-        {/* sand — clipped to the glass so it follows the curves */}
         <G clipPath={`url(#${clipId})`}>
-          {p < 0.999 && <Rect x={0} y={surfaceY} width={W} height={neckY - surfaceY + 0.5} fill={color} opacity={0.9} />}
-          {p > 0.001 && <Rect x={0} y={fillY} width={W} height={botY - fillY + 0.5} fill={color} opacity={0.9} />}
-          {running && p > 0.001 && p < 0.999 && <Rect x={cx - 1} y={neckY} width={2} height={Math.max(0, fillY - neckY)} fill={color} />}
+          <AnimatedRect x={0} width={W} fill={color} opacity={0.9} animatedProps={topProps} />
+          <AnimatedRect x={0} width={W} fill={color} opacity={0.9} animatedProps={bottomProps} />
+          {running && <AnimatedRect x={cx - 1} y={neckY} width={2} fill={color} animatedProps={streamProps} />}
         </G>
 
-        {/* outline + caps */}
         <Path d={d} fill="none" stroke={color} strokeWidth={stroke} strokeLinejoin="round" />
         <Rect x={capX} y={0} width={capW} height={capH} rx={capH / 2} fill={color} />
         <Rect x={capX} y={TH - capH} width={capW} height={capH} rx={capH / 2} fill={color} />

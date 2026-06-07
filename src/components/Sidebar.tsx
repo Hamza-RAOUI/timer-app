@@ -16,7 +16,7 @@ const NAV: { key: AppView; label: string; icon: keyof typeof Ionicons.glyphMap }
   { key: 'settings', label: 'Settings', icon: 'settings-outline' },
 ];
 
-export const Sidebar: React.FC = () => {
+export const Sidebar: React.FC<{ onCollapse?: () => void }> = ({ onCollapse }) => {
   const view = useUiStore((s) => s.view);
   const setView = useUiStore((s) => s.setView);
   const technique = useSettingsStore((s) => s.lastTechnique);
@@ -34,10 +34,17 @@ export const Sidebar: React.FC = () => {
   return (
     <View style={styles.root}>
       <View style={styles.brandRow}>
-        <View style={styles.logo}>
-          <Ionicons name="timer" size={18} color="#fff" />
-        </View>
-        <Text style={styles.brand}>Flowglass</Text>
+        <Pressable onPress={() => setView('timer')} style={styles.brandPress} accessibilityLabel="Go to timer">
+          <View style={styles.logo}>
+            <Ionicons name="timer" size={18} color="#fff" />
+          </View>
+          <Text style={styles.brand}>Flowglass</Text>
+        </Pressable>
+        {onCollapse && (
+          <Pressable onPress={onCollapse} style={styles.collapseBtn} accessibilityLabel="Collapse sidebar">
+            <Ionicons name="chevron-back" size={18} color={colors.text.secondary} />
+          </Pressable>
+        )}
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 16 }}>
@@ -117,7 +124,9 @@ export const Sidebar: React.FC = () => {
 
 const styles = StyleSheet.create({
   root: { flex: 1, paddingHorizontal: 16, paddingTop: 18 },
-  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 18, paddingHorizontal: 4 },
+  brandRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18, paddingHorizontal: 4 },
+  brandPress: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  collapseBtn: { width: 32, height: 32, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surfaceAlt, borderWidth: 1, borderColor: colors.border },
   logo: { width: 34, height: 34, borderRadius: 11, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center' },
   brand: { fontFamily: fonts.headingBold, fontSize: 20, color: colors.text.primary, letterSpacing: -0.3 },
 
