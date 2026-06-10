@@ -12,8 +12,13 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-        {/* 
-          Disable body scrolling on web. This makes ScrollView components work closer to how they do on native. 
+        {/* PWA / installability — manifest declares the Windows 11 widget. */}
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#4F46E5" />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+
+        {/*
+          Disable body scrolling on web. This makes ScrollView components work closer to how they do on native.
           However, body scrolling is often nice to have for mobile web. If you want to enable it, remove this line.
         */}
         <ScrollViewStyleReset />

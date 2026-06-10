@@ -1,0 +1,31 @@
+{
+  "name": "Flowglass",
+  "short_name": "Flowglass",
+  "description": "Free Pomodoro and focus timer",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#4F46E5",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "widgets": [
+    {
+      "name": "Flowglass Timer",
+      "description": "Focus timer widget for Windows 11",
+      "tag": "flowglass-timer",
+      "ms_ac_template": "/widget-template.json",
+      "data": "/widget-data.json",
+      "type": "application/json",
+      "url": "/widget",
+      "short_name": "Timer",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }],
+      "screenshots": [
+        { "src": "/icon-512.png", "sizes": "512x512", "label": "Flowglass focus timer" }
+      ],
+      "backgrounds": []
+    }
+  ]
+}

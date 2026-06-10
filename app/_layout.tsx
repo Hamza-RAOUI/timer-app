@@ -17,6 +17,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -60,7 +61,16 @@ export default function RootLayout() {
     if (fontsLoaded) SplashScreen.hideAsync().catch(() => {});
   }, [fontsLoaded]);
 
-  if (!fontsLoaded) return null;
+  // Register the PWA service worker (web only) for offline use + installability.
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+  }, []);
+
+  // On web, render immediately so static export captures real HTML (SEO) and the
+  // page never flashes blank — fonts swap in when ready. Native waits to avoid FOUT.
+  if (!fontsLoaded && Platform.OS !== 'web') return null;
 
   
 

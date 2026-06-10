@@ -1,0 +1,38 @@
+{
+  "type": "AdaptiveCard",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Flowglass",
+      "weight": "Bolder",
+      "size": "Medium",
+      "color": "Accent"
+    },
+    {
+      "type": "TextBlock",
+      "text": "${sessionLabel}",
+      "spacing": "None",
+      "isSubtle": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "${timeRemaining}",
+      "size": "ExtraLarge",
+      "weight": "Bolder",
+      "horizontalAlignment": "Center",
+      "spacing": "Medium"
+    },
+    {
+      "type": "ActionSet",
+      "actions": [
+        {
+          "type": "Action.OpenUrl",
+          "title": "Open timer",
+          "url": "https://www.flowglass.app/widget"
+        }
+      ]
+    }
+  ]
+}
