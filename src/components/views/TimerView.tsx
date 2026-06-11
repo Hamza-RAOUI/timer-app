@@ -124,7 +124,7 @@ const CountdownTimer: React.FC<{ technique: Technique; category: Category }> = (
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={styles.cornerHg} pointerEvents="none">
+      <View style={[styles.cornerHg, { pointerEvents: 'none' }]}>
         <Hourglass progress={progress} color={accent} running={countdown.isRunning} size={64} />
       </View>
       <Stage phaseLabel={phaseLabel} category={category} technique={technique}>

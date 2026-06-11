@@ -1,7 +1,8 @@
 /**
- * Cadence — Light theme (indigo / slate)
+ * Flowglass — Light theme (indigo / slate)
  * Clean, calm, all-ages. White surfaces, soft indigo accent, slate text.
  */
+import { Platform } from 'react-native';
 
 export const colors = {
   // Surfaces
@@ -45,30 +46,22 @@ export const colors = {
 
 export type CategoryColorKey = keyof typeof colors.category;
 
-// Soft shadow presets (light theme cards).
-export const shadow = {
-  sm: {
-    shadowColor: '#1E293B',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  md: {
-    shadowColor: '#1E293B',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.08,
-    shadowRadius: 20,
-    elevation: 6,
-  },
-  lg: {
-    shadowColor: '#1E293B',
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.1,
-    shadowRadius: 32,
-    elevation: 12,
-  },
-} as const;
+// Soft shadow presets. Web uses `boxShadow` (RN-Web deprecated shadow* props);
+// native keeps shadow*/elevation.
+export const shadow: Record<'sm' | 'md' | 'lg', object> = {
+  sm: Platform.select({
+    web: { boxShadow: '0 2px 8px rgba(30,41,59,0.06)' },
+    default: { shadowColor: '#1E293B', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
+  })!,
+  md: Platform.select({
+    web: { boxShadow: '0 8px 20px rgba(30,41,59,0.08)' },
+    default: { shadowColor: '#1E293B', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.08, shadowRadius: 20, elevation: 6 },
+  })!,
+  lg: Platform.select({
+    web: { boxShadow: '0 16px 32px rgba(30,41,59,0.10)' },
+    default: { shadowColor: '#1E293B', shadowOffset: { width: 0, height: 16 }, shadowOpacity: 0.1, shadowRadius: 32, elevation: 12 },
+  })!,
+};
 
 // Back-compat alias (a few utility files may import `palette`).
 export const palette = {

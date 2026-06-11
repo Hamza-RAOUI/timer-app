@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { CATEGORIES } from '../../constants/focus';
 import { useStatsStore, type RangeKey } from '../../stores/statsStore';
-import { colors } from '../../theme/colors';
+import { colors, shadow } from '../../theme/colors';
 import { fonts, tabular } from '../../theme/typography';
 import { formatMsHuman } from '../../utils/timeFormatter';
 import { Card } from '../Card';
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   h1: { fontFamily: fonts.headingBold, fontSize: 28, color: colors.text.primary, letterSpacing: -0.5, marginBottom: 18 },
   segment: { flexDirection: 'row', backgroundColor: colors.surfaceAlt, borderRadius: 14, borderWidth: 1, borderColor: colors.border, padding: 4, gap: 4, marginBottom: 18 },
   segmentItem: { flex: 1, paddingVertical: 9, borderRadius: 10, alignItems: 'center' },
-  segmentItemActive: { backgroundColor: colors.surface, ...{ shadowColor: '#1E293B', shadowOpacity: 0.08, shadowRadius: 6, shadowOffset: { width: 0, height: 1 }, elevation: 1 } },
+  segmentItemActive: { backgroundColor: colors.surface, ...shadow.sm },
   segmentText: { fontFamily: fonts.medium, fontSize: 13, color: colors.text.secondary },
   segmentTextActive: { color: colors.accent, fontFamily: fonts.semibold },
   grid: {},
