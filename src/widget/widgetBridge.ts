@@ -1,4 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
+import { getProgress } from '@/src/lib/game';
 import { useStatsStore } from '@/src/stores/statsStore';
 
 interface TempoWidgetModule {
@@ -22,9 +23,9 @@ let lastSig = '';
 export const pushStatsToWidget = async () => {
   if (!native || (Platform.OS !== 'android' && Platform.OS !== 'ios')) return;
   const state = useStatsStore.getState();
-  const focusMs = state.todayMinutes() * 60_000;
+  const focusMs = Math.round(state.todayMinutes() * 60_000);
   const sessions = state.countInRange('D');
-  const streak = state.streak();
+  const streak = getProgress().streak.current;
   const sig = `${focusMs}|${sessions}|${streak}`;
   if (sig === lastSig) return;
   lastSig = sig;

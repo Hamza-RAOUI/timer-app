@@ -39,3 +39,6 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Original Pixabay downloads (~85 MB); the app ships the processed files in public/audio
+assets/audio-src/

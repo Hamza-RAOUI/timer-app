@@ -3,12 +3,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import Head from 'expo-router/head';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { colors, shadow } from '../../theme/colors';
-import { fonts } from '../../theme/typography';
+import { ScrollView, Text, View } from 'react-native';
+import { SITE_URL } from '../../constants/appConfig';
+import { LEGAL_DOCS } from '../../content/legal';
+import { makeStyles, useTheme } from '../../theme/ThemeProvider';
+import { fonts, SLANT, UNSLANT } from '../../theme/typography';
+import { SandScene } from '../art/SandScene';
 import { MiniTimer } from './MiniTimer';
-
-const SITE = 'https://www.flowglass.app';
 
 export interface RelatedLink {
   href: string;
@@ -22,13 +23,15 @@ interface SeoArticleProps {
   h1: string;
   intro: string;
   timerMinutes?: number;
-  children: React.ReactNode; // article body (H2 + P from @expo/html-elements)
+  children: React.ReactNode; // article body (ArticleH2 + ArticleP)
   related: RelatedLink[];
   jsonLd: object;
 }
 
 export const SeoArticle: React.FC<SeoArticleProps> = ({ path, title, description, h1, intro, timerMinutes = 25, children, related, jsonLd }) => {
-  const url = `${SITE}${path}`;
+  const t = useTheme();
+  const styles = useStyles();
+  const url = `${SITE_URL}${path}`;
   return (
     <>
       <Head>
@@ -47,10 +50,12 @@ export const SeoArticle: React.FC<SeoArticleProps> = ({ path, title, description
       <ScrollView style={styles.root} contentContainerStyle={styles.content}>
         {/* Top bar */}
         <View style={styles.topbar}>
-          <Link href="/" style={styles.brandLink}>
+          <Link href="/" style={styles.brandLink} accessibilityLabel="Flowglass home">
             <View style={styles.brandRow}>
               <View style={styles.logo}>
-                <Ionicons name="timer" size={16} color="#fff" />
+                <View style={{ transform: [{ skewX: UNSLANT }] }}>
+                  <Ionicons name="hourglass" size={15} color={t.colors.text.onAccent} />
+                </View>
               </View>
               <Text style={styles.brand}>Flowglass</Text>
             </View>
@@ -60,6 +65,8 @@ export const SeoArticle: React.FC<SeoArticleProps> = ({ path, title, description
           </Link>
         </View>
 
+        <SandScene height={150} style={styles.heroArt} label="Illustration: an hourglass on sand dunes under the sky" />
+
         <View style={styles.hero}>
           <H1 style={styles.h1}>{h1}</H1>
           <P style={styles.intro}>{intro}</P>
@@ -68,7 +75,7 @@ export const SeoArticle: React.FC<SeoArticleProps> = ({ path, title, description
         {/* Live, embedded, working timer */}
         <View style={styles.timerCard}>
           <MiniTimer minutes={timerMinutes} />
-          <Text style={styles.timerNote}>A real Flowglass timer — press start and focus right here.</Text>
+          <Text style={styles.timerNote}>A real Flowglass timer — press start and focus right here. Open the app to earn XP and level up.</Text>
         </View>
 
         <View style={styles.article}>{children}</View>
@@ -80,55 +87,74 @@ export const SeoArticle: React.FC<SeoArticleProps> = ({ path, title, description
             {related.map((r) => (
               <Link key={r.href} href={r.href as never} style={styles.relatedLink}>
                 <Text style={styles.relatedLinkText}>{r.label}</Text>
-                <Ionicons name="arrow-forward" size={15} color={colors.accent} />
+                <Ionicons name="arrow-forward" size={15} color={t.colors.accentText} />
               </Link>
             ))}
           </View>
         </View>
 
-        <View style={styles.footer}>
-          <A href={SITE} style={styles.footerLink}>flowglass.app</A>
-          <Text style={styles.footerText}>Free focus & Pomodoro timer · Web · iOS · Android</Text>
+        <View style={styles.footer} role="contentinfo">
+          <A href={SITE_URL} style={styles.footerLink}>
+            flowglass.app
+          </A>
+          <Text style={styles.footerText}>Free focus & Pomodoro timer · no ads · no tracking cookies</Text>
+          <View style={styles.legalRow}>
+            {LEGAL_DOCS.map((d) => (
+              <Link key={d.path} href={d.path} style={styles.legalLink}>
+                {d.title}
+              </Link>
+            ))}
+          </View>
         </View>
       </ScrollView>
     </>
   );
 };
 
-export const articleStyles = StyleSheet.create({
-  h2: { fontFamily: fonts.headingBold, fontSize: 22, color: colors.text.primary, marginTop: 26, marginBottom: 8, letterSpacing: -0.4 },
-  p: { fontFamily: fonts.body, fontSize: 16, lineHeight: 26, color: colors.text.secondary, marginBottom: 14 },
-});
+/** Article heading / paragraph with the themed article typography. */
+export const ArticleH2: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const styles = useStyles();
+  return <H2 style={styles.h2}>{children}</H2>;
+};
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.bg },
+export const ArticleP: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const styles = useStyles();
+  return <P style={styles.p}>{children}</P>;
+};
+
+const useStyles = makeStyles((t) => ({
+  root: { flex: 1, backgroundColor: t.colors.bg },
   content: { paddingHorizontal: 20, paddingBottom: 80, alignItems: 'center' },
   topbar: { width: '100%', maxWidth: 760, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 18 },
   brandLink: { textDecorationLine: 'none' },
   brandRow: { flexDirection: 'row', alignItems: 'center', gap: 9 },
-  logo: { width: 30, height: 30, borderRadius: 9, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center' },
-  brand: { fontFamily: fonts.headingBold, fontSize: 18, color: colors.text.primary },
-  openApp: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 12, backgroundColor: colors.accentSoft },
-  openAppText: { fontFamily: fonts.semibold, fontSize: 13, color: colors.accent },
-  hero: { width: '100%', maxWidth: 760, marginTop: 14 },
-  h1: { fontFamily: fonts.headingBold, fontSize: 38, lineHeight: 44, color: colors.text.primary, letterSpacing: -1, marginBottom: 12 },
-  intro: { fontFamily: fonts.body, fontSize: 18, lineHeight: 28, color: colors.text.secondary, marginBottom: 4 },
+  logo: { width: 30, height: 30, borderRadius: 8, backgroundColor: t.colors.accent, alignItems: 'center', justifyContent: 'center', transform: [{ skewX: SLANT }] },
+  brand: { fontFamily: fonts.display, fontSize: 17, letterSpacing: 1.4, color: t.colors.text.primary, textTransform: 'uppercase' },
+  openApp: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 12, backgroundColor: t.colors.accentSoft, textDecorationLine: 'none' },
+  openAppText: { fontFamily: fonts.semibold, fontSize: 13, color: t.colors.accentText },
+  heroArt: { maxWidth: 760, borderRadius: 22, borderWidth: 1, borderColor: t.colors.border },
+  hero: { width: '100%', maxWidth: 760, marginTop: 22 },
+  h1: { fontFamily: fonts.display, fontSize: 38, lineHeight: 44, color: t.colors.text.primary, letterSpacing: -0.5, marginBottom: 12, marginTop: 0 },
+  intro: { fontFamily: fonts.body, fontSize: 18, lineHeight: 28, color: t.colors.text.secondary, marginBottom: 4 },
   timerCard: {
     width: '100%',
     maxWidth: 760,
     marginTop: 22,
     paddingVertical: 26,
+    paddingHorizontal: 16,
     borderRadius: 24,
-    backgroundColor: colors.surface,
+    backgroundColor: t.colors.surface,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: t.colors.border,
     alignItems: 'center',
-    ...shadow.md,
+    ...t.shadow.md,
   },
-  timerNote: { fontFamily: fonts.body, fontSize: 13, color: colors.text.tertiary, marginTop: 14 },
+  timerNote: { fontFamily: fonts.body, fontSize: 13, color: t.colors.text.tertiary, marginTop: 14, textAlign: 'center' },
   article: { width: '100%', maxWidth: 760, marginTop: 10 },
+  h2: { fontFamily: fonts.headingBold, fontSize: 22, color: t.colors.text.primary, marginTop: 26, marginBottom: 8, letterSpacing: -0.4 },
+  p: { fontFamily: fonts.body, fontSize: 16, lineHeight: 26, color: t.colors.text.secondary, marginBottom: 14, marginTop: 0 },
   related: { width: '100%', maxWidth: 760, marginTop: 30 },
-  relatedTitle: { fontFamily: fonts.headingBold, fontSize: 20, color: colors.text.primary, marginBottom: 12, letterSpacing: -0.3 },
+  relatedTitle: { fontFamily: fonts.headingBold, fontSize: 20, color: t.colors.text.primary, marginBottom: 12, letterSpacing: -0.3 },
   relatedGrid: { gap: 10 },
   relatedLink: {
     flexDirection: 'row',
@@ -137,13 +163,15 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 14,
-    backgroundColor: colors.surface,
+    backgroundColor: t.colors.surface,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: t.colors.border,
     textDecorationLine: 'none',
   },
-  relatedLinkText: { fontFamily: fonts.semibold, fontSize: 15, color: colors.text.primary },
+  relatedLinkText: { fontFamily: fonts.semibold, fontSize: 15, color: t.colors.text.primary },
   footer: { width: '100%', maxWidth: 760, marginTop: 40, alignItems: 'center', gap: 6 },
-  footerLink: { fontFamily: fonts.semibold, fontSize: 14, color: colors.accent, textDecorationLine: 'none' },
-  footerText: { fontFamily: fonts.body, fontSize: 12, color: colors.text.tertiary },
-});
+  footerLink: { fontFamily: fonts.semibold, fontSize: 14, color: t.colors.accentText, textDecorationLine: 'none' },
+  footerText: { fontFamily: fonts.body, fontSize: 12, color: t.colors.text.tertiary },
+  legalRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 4, marginTop: 6 },
+  legalLink: { fontFamily: fonts.medium, fontSize: 12, color: t.colors.text.secondary, paddingHorizontal: 6, paddingVertical: 4, textDecorationLine: 'underline' },
+}));
