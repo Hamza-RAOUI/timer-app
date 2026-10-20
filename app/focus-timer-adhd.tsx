@@ -1,5 +1,4 @@
-import { SeoArticle, articleStyles } from '@/src/components/web/SeoArticle';
-import { H2, P } from '@expo/html-elements';
+import { ArticleH2, ArticleP, SeoArticle } from '@/src/components/web/SeoArticle';
 import React from 'react';
 
 export default function FocusTimerAdhdPage() {
@@ -24,7 +23,7 @@ export default function FocusTimerAdhdPage() {
     <SeoArticle
       path="/focus-timer-adhd"
       title="Focus Timer for ADHD — Free, Visual & Simple | Flowglass"
-      description="A free, low-distraction focus timer that helps with ADHD. Make time visible, start tasks more easily, and customize your work and break lengths."
+      description="A free, low-distraction, ADHD-friendly focus timer. Make time visible, start with short blocks, and customize your work and break lengths."
       h1="Focus Timer for ADHD"
       intro="Make time visible and tasks easier to start. Press start below, or set a shorter custom block that feels achievable today."
       timerMinutes={15}
@@ -34,35 +33,39 @@ export default function FocusTimerAdhdPage() {
         { href: '/deep-work-timer', label: 'Deep Work Timer' },
       ]}
     >
-      <H2 style={articleStyles.h2}>Why timers help with ADHD</H2>
-      <P style={articleStyles.p}>
+      <ArticleH2>Why a visible timer can help</ArticleH2>
+      <ArticleP>
         For many people with ADHD, time feels abstract — it is either “now” or “not now.” A visible countdown turns that fog into
         something concrete. When the task is “focus until the hourglass empties,” starting is far less daunting than facing an
         open-ended afternoon of work. The timer also externalizes the decision to keep going, so you are not relying on willpower alone.
-      </P>
-      <P style={articleStyles.p}>
-        Flowglass keeps the screen calm on purpose. There are no flashing colors, no aggressive ticking, and no clutter — just a
-        gentle draining hourglass, the time remaining, and a single start button. Less on screen means fewer things to pull your
-        attention away.
-      </P>
+      </ArticleP>
+      <ArticleP>
+        Flowglass keeps the screen calm on purpose. There is no aggressive ticking and no clutter — just a draining hourglass, the
+        time remaining, and a single start button. Finishing a block earns XP and a short celebration; if motion is distracting,
+        switch on Reduce motion in Settings and it all stays still.
+      </ArticleP>
 
-      <H2 style={articleStyles.h2}>Start small and adjust</H2>
-      <P style={articleStyles.p}>
+      <ArticleH2>Start small and adjust</ArticleH2>
+      <ArticleP>
         Twenty-five minutes can feel like a wall on a hard day. With the Custom technique you can set any work and break length —
-        try a 10 or 15 minute block to get moving. Momentum matters more than length: once you have started, continuing is easy.
+        try a 10 or 15 minute block to get moving. Momentum matters more than length: once you have started, continuing is often easier.
         You can always run another short block, and another, until the work is done.
-      </P>
-      <P style={articleStyles.p}>
+      </ArticleP>
+      <ArticleP>
         Save your favorite setup as a preset so it is one tap away next time. Flowglass remembers it, along with the time you have
         focused, so good days are visible and repeatable.
-      </P>
+      </ArticleP>
 
-      <H2 style={articleStyles.h2}>Body doubling and breaks</H2>
-      <P style={articleStyles.p}>
+      <ArticleH2>Breaks and small habits</ArticleH2>
+      <ArticleP>
         Pair the timer with a clear, single task and a tidy space. Use breaks to stand and move rather than switch to your phone,
-        which can quietly eat the rest of your afternoon. Flowglass is free, needs no login, and runs on web, iOS, and Android, so
-        the same calm timer is always within reach. Begin with the short block above whenever you are ready.
-      </P>
+        which can quietly eat the rest of your afternoon. The timer is free and needs no login, so it is always within reach. Begin
+        with the short block above whenever you are ready.
+      </ArticleP>
+      <ArticleP>
+        Flowglass is a productivity tool, not a treatment, and this page is general information rather than medical advice. If ADHD
+        affects your daily life, a qualified professional can help you find what works for you.
+      </ArticleP>
     </SeoArticle>
   );
 }

@@ -1,5 +1,4 @@
-import { SeoArticle, articleStyles } from '@/src/components/web/SeoArticle';
-import { H2, P } from '@expo/html-elements';
+import { ArticleH2, ArticleP, SeoArticle } from '@/src/components/web/SeoArticle';
 import React from 'react';
 
 export default function PomodoroTimerPage() {
@@ -10,7 +9,10 @@ export default function PomodoroTimerPage() {
       {
         '@type': 'Question',
         name: 'Is the Flowglass Pomodoro timer free?',
-        acceptedAnswer: { '@type': 'Answer', text: 'Yes. Flowglass is completely free, runs in your browser with no login or download, and also works on iOS and Android.' },
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. Every timer, XP, levels, skills, streaks, the daily quest and your last 7 days of statistics are free, with no login or download. An optional low-cost Pro subscription for extras is planned.',
+        },
       },
       {
         '@type': 'Question',
@@ -39,36 +41,37 @@ export default function PomodoroTimerPage() {
         { href: '/deep-work-timer', label: 'Deep Work Timer' },
       ]}
     >
-      <H2 style={articleStyles.h2}>What is a Pomodoro timer?</H2>
-      <P style={articleStyles.p}>
+      <ArticleH2>What is a Pomodoro timer?</ArticleH2>
+      <ArticleP>
         A Pomodoro timer breaks your work into short, focused intervals — traditionally 25 minutes — separated by brief breaks.
         Each interval is called a “Pomodoro.” The method works because a fixed, visible countdown turns a vague, open-ended task
         into a small commitment you can actually start. Instead of “write the report,” the job becomes “focus for 25 minutes,”
         which is far easier for your brain to accept.
-      </P>
-      <P style={articleStyles.p}>
+      </ArticleP>
+      <ArticleP>
         Flowglass shows the time as a calm draining hourglass alongside the digits, so you can feel your session progressing
         without staring at the numbers. When the sand runs out, you take a short break and start the next round.
-      </P>
+      </ArticleP>
 
-      <H2 style={articleStyles.h2}>How to use the 25/5 method</H2>
-      <P style={articleStyles.p}>
+      <ArticleH2>How to use the 25/5 method</ArticleH2>
+      <ArticleP>
         Pick one task. Press start and work on only that task for 25 minutes — no email, no messages, no switching tabs. When the
         timer ends, take a 5-minute break: stand up, stretch, look away from the screen. After four focus blocks, take a longer
         15-minute break. Flowglass handles this rhythm automatically, including the long break after your fourth Pomodoro.
-      </P>
-      <P style={articleStyles.p}>
+      </ArticleP>
+      <ArticleP>
         The breaks are not optional extras — they are what make the technique sustainable. Stepping away lets your attention
-        recover so the next sprint is just as sharp as the first. Most people find three to six quality Pomodoros a day is worth
-        more than eight distracted hours.
-      </P>
+        recover so the next sprint starts fresh. A handful of genuinely focused Pomodoros can be worth more than a long,
+        distracted day.
+      </ArticleP>
 
-      <H2 style={articleStyles.h2}>Why use Flowglass instead of a kitchen timer?</H2>
-      <P style={articleStyles.p}>
-        Flowglass remembers your sessions and rolls them up into clean statistics by category — Study, Work, Hobby, and Personal —
-        so you can see where your focused hours actually go each week. It is free, needs no account, and the very same timer runs on
-        the web, your phone, and soon your Windows desktop. Start a Pomodoro above, then explore the other focus methods when you are ready.
-      </P>
+      <ArticleH2>Why use Flowglass instead of a kitchen timer?</ArticleH2>
+      <ArticleP>
+        Flowglass remembers your sessions and rolls them up into clean statistics by skill — Study, Work, Hobby, and Personal —
+        so you can see where your focused hours actually go each week. Every finished Pomodoro also earns XP: level up, grow each
+        skill, keep a daily streak and complete a rotating daily quest. The timer is free, needs no account, and keeps your data on
+        your device. Start a Pomodoro above, then explore the other focus methods when you are ready.
+      </ArticleP>
     </SeoArticle>
   );
 }

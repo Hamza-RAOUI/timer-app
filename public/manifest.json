@@ -1,7 +1,7 @@
 {
   "name": "Flowglass",
   "short_name": "Flowglass",
-  "description": "Free Pomodoro and focus timer",
+  "description": "Free Pomodoro and focus timer with XP, levels and quests",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0d1117",

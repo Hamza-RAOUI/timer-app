@@ -1,11 +1,17 @@
 import { create } from 'zustand';
+import { useUiStore } from './uiStore';
 
 type IntervalHandle = ReturnType<typeof setInterval> | null;
 
 interface StopwatchState {
+  /** Timer ms (equals wall-clock ms unless the dev speed-up is on). */
   elapsedMs: number;
   isRunning: boolean;
-  startedAt: number | null;
+  /** Wall-clock anchor: elapsed = (now − anchor) × speed while running. */
+  anchor: number | null;
+  /** Wall-clock time of the first start since the last reset. */
+  firstStartedAt: number | null;
+  speed: number;
   interval: IntervalHandle;
   laps: number[];
 
@@ -24,26 +30,30 @@ export const useStopwatchStore = create<StopwatchState>((set, get) => {
   };
 
   const tick = () => {
-    const { isRunning, startedAt } = get();
-    if (!isRunning || startedAt == null) return;
-    set({ elapsedMs: Math.max(0, Date.now() - startedAt) });
+    const { isRunning, anchor, speed } = get();
+    if (!isRunning || anchor == null) return;
+    set({ elapsedMs: Math.max(0, (Date.now() - anchor) * speed) });
   };
 
   return {
     elapsedMs: 0,
     isRunning: false,
-    startedAt: null,
+    anchor: null,
+    firstStartedAt: null,
+    speed: 1,
     interval: null,
     laps: [],
 
     start: () => {
-      const { isRunning, elapsedMs } = get();
+      const { isRunning, elapsedMs, firstStartedAt } = get();
       if (isRunning) return;
 
       clear();
-      const startedAt = Date.now() - elapsedMs;
+      const speed = Math.max(1, useUiStore.getState().devSpeed);
+      const now = Date.now();
+      const anchor = now - elapsedMs / speed;
       const interval = setInterval(tick, 50);
-      set({ isRunning: true, startedAt, interval });
+      set({ isRunning: true, anchor, speed, interval, firstStartedAt: firstStartedAt ?? now });
       tick();
     },
 
@@ -52,12 +62,12 @@ export const useStopwatchStore = create<StopwatchState>((set, get) => {
       if (!isRunning) return;
       tick();
       clear();
-      set({ isRunning: false, interval: null, startedAt: null });
+      set({ isRunning: false, interval: null, anchor: null });
     },
 
     reset: () => {
       clear();
-      set({ elapsedMs: 0, isRunning: false, interval: null, startedAt: null, laps: [] });
+      set({ elapsedMs: 0, isRunning: false, interval: null, anchor: null, firstStartedAt: null, laps: [] });
     },
 
     lap: () => {

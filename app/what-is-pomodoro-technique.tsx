@@ -1,5 +1,4 @@
-import { SeoArticle, articleStyles } from '@/src/components/web/SeoArticle';
-import { H2, P } from '@expo/html-elements';
+import { ArticleH2, ArticleP, SeoArticle } from '@/src/components/web/SeoArticle';
 import React from 'react';
 
 export default function WhatIsPomodoroPage() {
@@ -23,7 +22,7 @@ export default function WhatIsPomodoroPage() {
       title="What Is the Pomodoro Technique? A Simple Guide | Flowglass"
       description="Learn the Pomodoro Technique: a simple 25/5 method for focused, sustainable work. Includes a free timer you can start right now."
       h1="What Is the Pomodoro Technique?"
-      intro="A simple, proven method for focused work in 25-minute sprints. Learn how it works, then try it with the free timer below."
+      intro="A simple, widely used method for focused work in 25-minute sprints. Learn how it works, then try it with the free timer below."
       timerMinutes={25}
       jsonLd={jsonLd}
       related={[
@@ -31,32 +30,32 @@ export default function WhatIsPomodoroPage() {
         { href: '/focus-timer-for-students', label: 'Focus Timer for Students' },
       ]}
     >
-      <H2 style={articleStyles.h2}>The origin of the Pomodoro Technique</H2>
-      <P style={articleStyles.p}>
+      <ArticleH2>The origin of the Pomodoro Technique</ArticleH2>
+      <ArticleP>
         The Pomodoro Technique was created by Francesco Cirillo in the late 1980s. As a student, he struggled to focus, so he made a
         deal with himself: just ten minutes of real concentration. He grabbed a tomato-shaped kitchen timer — “pomodoro” is Italian
         for tomato — and the method was born. The core idea is timeless: commit to a short, fixed interval of single-tasking, then rest.
-      </P>
+      </ArticleP>
 
-      <H2 style={articleStyles.h2}>How the technique works</H2>
-      <P style={articleStyles.p}>
+      <ArticleH2>How the technique works</ArticleH2>
+      <ArticleP>
         The classic cycle is 25 minutes of focused work followed by a 5-minute break — one Pomodoro. After four Pomodoros you take a
         longer break of around 15 minutes. During a Pomodoro you do one thing only. If a distraction pops into your head, you jot it
         down and return to the task. The timer, not your willpower, decides when you stop.
-      </P>
-      <P style={articleStyles.p}>
+      </ArticleP>
+      <ArticleP>
         This structure works for two reasons. First, a short commitment is easy to start, which defeats procrastination. Second, the
         regular breaks prevent the mental fatigue that makes long sessions unravel. You end the day having done focused work instead of
         merely having been busy.
-      </P>
+      </ArticleP>
 
-      <H2 style={articleStyles.h2}>Try it now with Flowglass</H2>
-      <P style={articleStyles.p}>
+      <ArticleH2>Try it now with Flowglass</ArticleH2>
+      <ArticleP>
         The timer at the top of this page is a real, working Pomodoro timer — press start and you have begun. Flowglass automates the
         full rhythm, including the long break after your fourth Pomodoro, and quietly logs your focused time so you can see your effort
-        add up. It is free, requires no account, and works on the web, iOS, and Android. When you want longer sessions, explore the deep
+        add up as XP and levels. The timer is free and requires no account. When you want longer sessions, explore the deep
         work timer; if 25 minutes feels like too much today, the ADHD-friendly page covers shorter, custom blocks.
-      </P>
+      </ArticleP>
     </SeoArticle>
   );
 }

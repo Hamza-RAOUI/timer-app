@@ -1,5 +1,5 @@
 /* Flowglass service worker — offline shell + installability. */
-const CACHE = 'flowglass-v1';
+const CACHE = 'flowglass-v2';
 const ASSETS = ['/', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', (e) => {
@@ -15,6 +15,8 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
+  // Leave other origins alone (Supabase API, analytics) — always live, never cached.
+  if (new URL(req.url).origin !== self.location.origin) return;
   // Network-first for navigations so fresh content wins; fall back to cache offline.
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).catch(() => caches.match(req).then((r) => r || caches.match('/'))));
