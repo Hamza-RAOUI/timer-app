@@ -10,13 +10,31 @@
  * to your own Resend account email until you verify a domain).
  * Secrets are read from the environment and never printed.
  */
+import { createInterface } from 'node:readline';
+
 const PROJECT_REF = 'hwcjffmzzwdgvwanqpgh';
-const token = process.env.SUPABASE_ACCESS_TOKEN;
-const resendKey = process.env.RESEND_API_KEY;
+
+/** Ask for a secret in the terminal without echoing it. */
+const askHidden = (question) =>
+  new Promise((resolve) => {
+    if (!process.stdin.isTTY) return resolve('');
+    const rl = createInterface({ input: process.stdin, output: process.stdout, terminal: true });
+    rl._writeToOutput = (s) => {
+      if (s.startsWith(question)) process.stdout.write(s); // show the prompt, hide the typing
+    };
+    rl.question(question, (answer) => {
+      rl.close();
+      process.stdout.write('\n');
+      resolve(answer.trim());
+    });
+  });
+
+const token = process.env.SUPABASE_ACCESS_TOKEN || (await askHidden('Supabase access token (sbp_…, hidden): '));
+const resendKey = process.env.RESEND_API_KEY || (await askHidden('Resend API key (re_…, hidden): '));
 const sender = process.env.SENDER_EMAIL || 'onboarding@resend.dev';
 
 if (!token || !resendKey) {
-  console.error('Set SUPABASE_ACCESS_TOKEN and RESEND_API_KEY first (see the comment at the top).');
+  console.error('Need both a Supabase access token and a Resend API key (see the comment at the top).');
   process.exit(1);
 }
 
