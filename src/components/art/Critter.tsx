@@ -80,7 +80,7 @@ export const Critter: React.FC<CritterProps> = ({ family, stage, size, browRaise
         {stage === 5 ? (
           <Flowkeeper uid={uid} closed={closed} silhouette={silhouette} />
         ) : (
-          <Creature family={family} stage={stage} closed={closed} browRaise={browRaise} silhouette={silhouette} />
+          <Creature uid={uid} family={family} stage={stage} closed={closed} browRaise={browRaise} silhouette={silhouette} />
         )}
       </G>
     </Svg>
@@ -88,7 +88,7 @@ export const Critter: React.FC<CritterProps> = ({ family, stage, size, browRaise
 };
 
 // ───────────── Stages 1–4 ─────────────
-const Creature: React.FC<{ family: FamilyKey; stage: Exclude<Stage, 5>; closed: boolean; browRaise: boolean; silhouette: boolean }> = ({ family, stage, closed, browRaise, silhouette }) => {
+const Creature: React.FC<{ uid: string; family: FamilyKey; stage: Exclude<Stage, 5>; closed: boolean; browRaise: boolean; silhouette: boolean }> = ({ uid, family, stage, closed, browRaise, silhouette }) => {
   const c = silhouette ? { fill: '#2A2540', shade: '#2A2540', light: '#2A2540' } : BODY[stage];
   const a = ANCHOR[stage];
   const acc = FAMILY_ACCENT[family];
@@ -96,7 +96,7 @@ const Creature: React.FC<{ family: FamilyKey; stage: Exclude<Stage, 5>; closed: 
     <G>
       {/* back accessories (cloak, runes) */}
       {!silhouette && <Behind family={family} stage={stage} acc={acc} />}
-      <Body stage={stage} c={c} />
+      <Body stage={stage} c={c} uid={uid} silhouette={silhouette} />
       {!silhouette && (
         <>
           <Face stage={stage} a={a} closed={closed} browRaise={browRaise} />
@@ -107,45 +107,143 @@ const Creature: React.FC<{ family: FamilyKey; stage: Exclude<Stage, 5>; closed: 
   );
 };
 
-const Body: React.FC<{ stage: Exclude<Stage, 5>; c: { fill: string; shade: string; light: string } }> = ({ stage, c }) => {
+const Body: React.FC<{ stage: Exclude<Stage, 5>; c: { fill: string; shade: string; light: string }; uid: string; silhouette: boolean }> = ({ stage, c, uid, silhouette }) => {
+  const g = (id: string) => (silhouette ? c.fill : `url(#${id}${uid})`);
   if (stage === 1)
     return (
       <G>
-        <Ellipse cx={86} cy={180} rx={9} ry={5} fill={c.shade} />
-        <Ellipse cx={114} cy={180} rx={9} ry={5} fill={c.shade} />
-        <Path d="M100 84 C120 106 136 128 136 150 C136 170 120 182 100 182 C80 182 64 170 64 150 C64 128 80 106 100 84 Z" fill={c.fill} />
-        <Path d="M100 84 C120 106 136 128 136 150 C136 170 120 182 100 182 C112 172 118 158 116 142 C114 122 106 104 100 84 Z" fill={c.shade} opacity={0.55} />
-        <Ellipse cx={84} cy={124} rx={6} ry={10} fill={c.light} opacity={0.8} transform="rotate(20 84 124)" />
+        <Defs>
+          <RadialGradient id={`gr${uid}`} cx="38%" cy="40%" r="70%">
+            <Stop offset="0" stopColor="#FFE7A6" />
+            <Stop offset="0.45" stopColor="#F6B740" />
+            <Stop offset="1" stopColor="#C9801A" />
+          </RadialGradient>
+        </Defs>
+        {/* floating sand */}
+        {!silhouette &&
+          [
+            [58, 110, 2.2],
+            [146, 118, 1.8],
+            [52, 150, 1.6],
+            [150, 160, 2],
+            [120, 86, 1.4],
+          ].map(([x, y, r], i) => <Circle key={i} cx={x} cy={y} r={r} fill={GOLD} opacity={0.8} />)}
+        {/* feet + nub arms */}
+        <Ellipse cx={86} cy={180} rx={10} ry={5.5} fill={c.shade} />
+        <Ellipse cx={114} cy={180} rx={10} ry={5.5} fill={c.shade} />
+        <Ellipse cx={64} cy={152} rx={7} ry={5} fill={c.shade} transform="rotate(-30 64 152)" />
+        <Ellipse cx={136} cy={152} rx={7} ry={5} fill={c.shade} transform="rotate(30 136 152)" />
+        <Path d="M100 84 C120 106 136 128 136 150 C136 170 120 182 100 182 C80 182 64 170 64 150 C64 128 80 106 100 84 Z" fill={g('gr')} />
+        {!silhouette && (
+          <>
+            <Path d="M100 84 C120 106 136 128 136 150 C136 170 120 182 100 182" fill="none" stroke="#FFF1C8" strokeWidth={2.5} opacity={0.55} />
+            {/* sand texture */}
+            {[
+              [90, 166],
+              [112, 170],
+              [120, 132],
+              [80, 140],
+              [104, 118],
+            ].map(([x, y], i) => (
+              <Circle key={i} cx={x} cy={y} r={1.3} fill="#C9801A" opacity={0.5} />
+            ))}
+            <Ellipse cx={84} cy={122} rx={6} ry={11} fill="#FFFFFF" opacity={0.55} transform="rotate(22 84 122)" />
+            <Circle cx={92} cy={106} r={2.4} fill="#FFFFFF" opacity={0.8} />
+          </>
+        )}
       </G>
     );
   if (stage === 2)
     return (
       <G>
-        <Ellipse cx={80} cy={180} rx={11} ry={6} fill={c.shade} />
-        <Ellipse cx={120} cy={180} rx={11} ry={6} fill={c.shade} />
-        <Path d="M54 150 C52 122 74 106 100 106 C128 106 150 120 148 150 C147 172 128 182 100 182 C72 182 55 172 54 150 Z" fill={c.fill} />
-        <Path d="M148 150 C147 172 128 182 100 182 C124 172 134 158 132 136 C131 124 126 114 118 108 C136 112 149 126 148 150 Z" fill={c.shade} opacity={0.6} />
-        <Ellipse cx={76} cy={128} rx={9} ry={6} fill={c.light} opacity={0.75} transform="rotate(-25 76 128)" />
-        {/* sprout */}
-        <Path d="M100 106 C99 98 100 92 104 88" stroke="#6FBF5A" strokeWidth={3} fill="none" strokeLinecap="round" />
-        <Ellipse cx={108} cy={88} rx={6} ry={3.5} fill="#7FD06A" transform="rotate(-30 108 88)" />
+        <Defs>
+          <RadialGradient id={`pb${uid}`} cx="35%" cy="35%" r="75%">
+            <Stop offset="0" stopColor="#F1E6D2" />
+            <Stop offset="0.5" stopColor="#CDBB9F" />
+            <Stop offset="1" stopColor="#8F7C61" />
+          </RadialGradient>
+        </Defs>
+        {/* little stones at the feet */}
+        {!silhouette && (
+          <>
+            <Ellipse cx={46} cy={180} rx={6} ry={3.5} fill="#A99579" />
+            <Ellipse cx={156} cy={181} rx={5} ry={3} fill="#A99579" />
+          </>
+        )}
+        <Ellipse cx={80} cy={180} rx={12} ry={6} fill={c.shade} />
+        <Ellipse cx={120} cy={180} rx={12} ry={6} fill={c.shade} />
+        <Ellipse cx={52} cy={150} rx={8} ry={6} fill={c.shade} transform="rotate(-25 52 150)" />
+        <Ellipse cx={150} cy={150} rx={8} ry={6} fill={c.shade} transform="rotate(25 150 150)" />
+        <Path d="M54 150 C52 122 74 106 100 106 C128 106 150 120 148 150 C147 172 128 182 100 182 C72 182 55 172 54 150 Z" fill={g('pb')} />
+        {!silhouette && (
+          <>
+            <Path d="M148 150 C147 172 128 182 100 182" fill="none" stroke="#FFF6E6" strokeWidth={2.5} opacity={0.5} />
+            {/* granite speckles + a hairline crack */}
+            {[
+              [70, 160, 1.8],
+              [128, 168, 1.6],
+              [136, 138, 1.4],
+              [84, 172, 1.2],
+              [118, 122, 1.4],
+              [64, 138, 1.2],
+            ].map(([x, y, r], i) => (
+              <Circle key={i} cx={x} cy={y} r={r} fill="#7A6850" opacity={0.6} />
+            ))}
+            <Path d="M128 116 L122 126 L126 132" stroke="#8F7C61" strokeWidth={1.6} fill="none" strokeLinecap="round" />
+            <Ellipse cx={74} cy={126} rx={10} ry={6} fill="#FFFFFF" opacity={0.45} transform="rotate(-25 74 126)" />
+            {/* moss cap + two-leaf sprout */}
+            <Path d="M80 110 C88 102 112 102 122 110 C114 114 88 114 80 110 Z" fill="#6FBF5A" />
+            <Path d="M100 106 C99 96 100 90 104 84" stroke="#4E9E3E" strokeWidth={3} fill="none" strokeLinecap="round" />
+            <Path d="M104 86 C110 76 122 76 124 82 C118 88 110 88 104 86 Z" fill="#7FD06A" />
+            <Path d="M102 92 C94 84 84 86 82 92 C88 96 96 96 102 92 Z" fill="#6FBF5A" />
+          </>
+        )}
       </G>
     );
   if (stage === 3)
     return (
       <G>
-        {/* arms */}
-        <Polygon points="44,128 58,118 66,150 50,158" fill={c.shade} />
-        <Polygon points="156,118 168,126 158,152 146,146" fill={c.shade} />
-        <Rect x={72} y={168} width={20} height={14} rx={4} fill={c.shade} />
-        <Rect x={108} y={168} width={20} height={14} rx={4} fill={c.shade} />
+        <Defs>
+          <LinearGradient id={`cr${uid}`} x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0" stopColor="#D2FFF7" />
+            <Stop offset="0.45" stopColor="#5EEAD4" />
+            <Stop offset="1" stopColor="#139A8A" />
+          </LinearGradient>
+          <RadialGradient id={`cg${uid}`} cx="50%" cy="50%" r="50%">
+            <Stop offset="0" stopColor="#5EEAD4" stopOpacity={0.55} />
+            <Stop offset="1" stopColor="#5EEAD4" stopOpacity={0} />
+          </RadialGradient>
+        </Defs>
+        {/* arms with faceted fists */}
+        <Polygon points="44,124 60,116 66,148 48,160 36,146" fill={c.shade} />
+        <Polygon points="36,146 48,160 56,156 46,140" fill={c.fill} opacity={0.7} />
+        <Polygon points="156,124 140,116 134,148 152,160 164,146" fill={c.shade} />
+        <Polygon points="164,146 152,160 144,156 154,140" fill={c.fill} opacity={0.7} />
+        {/* legs */}
+        <Polygon points="70,182 94,182 94,166 72,164" fill={c.shade} />
+        <Polygon points="130,182 106,182 106,166 128,164" fill={c.shade} />
+        {/* faceted body */}
         <Polygon points="62,104 88,84 126,86 148,108 152,150 132,174 70,174 50,148" fill={c.fill} />
-        <Polygon points="126,86 148,108 152,150 132,174 112,174 128,140 124,104" fill={c.shade} opacity={0.6} />
-        <Polygon points="62,104 88,84 98,92 72,112" fill={c.light} opacity={0.7} />
-        {/* crystals */}
-        <Polygon points="96,86 104,62 112,86" fill="#5EEAD4" />
-        <Polygon points="112,88 124,70 126,92" fill="#2CB9A6" />
-        <Polygon points="100,86 104,66 106,86" fill="#B6FFF3" opacity={0.8} />
+        <Polygon points="126,86 148,108 152,150 132,174 112,174 128,140 124,104" fill={c.shade} opacity={silhouette ? 1 : 0.7} />
+        {!silhouette && (
+          <>
+            <Polygon points="62,104 88,84 98,92 72,112" fill={c.light} />
+            <Polygon points="50,148 62,104 72,112 66,146" fill={c.light} opacity={0.45} />
+            <Polygon points="70,174 66,146 86,160 98,174" fill={c.shade} opacity={0.45} />
+            <Path d="M72 112 L98 92 L124 104 M66 146 L86 160 L112 156 L128 140" stroke={c.shade} strokeWidth={1.6} fill="none" opacity={0.7} strokeLinejoin="round" />
+            {/* crystals with glow */}
+            <Circle cx={108} cy={74} r={26} fill={`url(#cg${uid})`} />
+          </>
+        )}
+        <Polygon points="94,88 104,58 114,88" fill={g('cr')} />
+        <Polygon points="112,90 126,66 128,94" fill={g('cr')} opacity={silhouette ? 1 : 0.85} />
+        <Polygon points="84,90 88,72 96,90" fill={g('cr')} opacity={silhouette ? 1 : 0.8} />
+        {!silhouette && (
+          <>
+            <Polygon points="100,86 104,64 106,86" fill="#FFFFFF" opacity={0.7} />
+            <Path d={`M122 58 Q122 64 128 64 Q122 64 122 70 Q122 64 116 64 Q122 64 122 58 Z`} fill="#D2FFF7" />
+          </>
+        )}
       </G>
     );
   // Monolith: stacked rock plates, boulder fists, glowing lava-sand cracks.
