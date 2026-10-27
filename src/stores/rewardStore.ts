@@ -20,7 +20,6 @@ export interface EvolutionReveal {
   to: Stage;
   fromName: string;
   toName: string;
-  quip: string;
 }
 
 interface RewardState {

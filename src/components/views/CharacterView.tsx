@@ -113,6 +113,7 @@ const EvolutionCard: React.FC = () => {
   const skill = useActiveSkill();
   const evo = useEvolution(skill.key);
   const preview = useUiStore((s) => s.devPreviewLevel);
+  const setForm = useSettingsStore((s) => s.setCreatureForm);
   const { width } = useWindowDimensions();
   const thumb = width < 640 ? 64 : 92;
   const fam = evo.family.key;
@@ -123,26 +124,35 @@ const EvolutionCard: React.FC = () => {
   return (
     <Card padding={18} style={[styles.card, { marginTop: 14 }]} accent={t.colors.highlight}>
       <SectionHeader
-        title={`${evo.family.line} line · ${skill.label}`}
+        title={`${skill.label} evolution`}
         right={<Text style={styles.meta}>{preview != null ? `Dev preview · LV ${preview}` : `Skill LV ${evo.skillLevel}`}</Text>}
       />
+      {evo.reached > 1 && <Text style={styles.evoHint}>Tap any form you've unlocked to show it.</Text>}
       <View style={styles.evoRow}>
         {STAGES.map((st) => {
-          const reached = st <= evo.stage;
+          const reached = st <= evo.reached;
           const current = st === evo.stage;
           return (
-            <View
+            <Pressable
               key={st}
-              style={[styles.evoCell, current && { borderColor: t.colors.accent, backgroundColor: t.colors.accentSoft }]}
-              accessible
-              accessibilityLabel={reached ? `Stage ${st}: ${stageName(fam, st)}${current ? ', current' : ''}` : `Stage ${st}: locked, skill level ${at[st - 1]}`}
+              disabled={!reached}
+              // Picking the newest form clears the choice, so future evolutions show up automatically.
+              onPress={() => setForm(skill.key, st === evo.reached ? null : st)}
+              style={({ hovered }: { hovered?: boolean }) => [
+                styles.evoCell,
+                reached && hovered && !current && { borderColor: t.colors.borderStrong },
+                current && { borderColor: t.colors.accent, backgroundColor: t.colors.accentSoft },
+              ]}
+              accessibilityRole={reached ? 'radio' : undefined}
+              accessibilityState={reached ? { checked: current } : { disabled: true }}
+              accessibilityLabel={reached ? `${stageName(fam, st)}${current ? ', shown' : ', tap to show'}` : `Locked form, skill level ${at[st - 1]}`}
             >
               <Critter family={fam} stage={st} size={thumb} silhouette={!reached} blink={current} />
               <Text style={[styles.evoName, !reached && { color: t.colors.text.tertiary }]} numberOfLines={2}>
                 {reached ? stageName(fam, st) : '???'}
               </Text>
-              <Text style={[styles.evoLv, tabular]}>{st === 5 ? `LV ${at[4]} + all` : `LV ${at[st - 1]}`}</Text>
-            </View>
+              <Text style={[styles.evoLv, tabular]}>{current ? 'Shown' : st === 5 ? `LV ${at[4]} + all` : `LV ${at[st - 1]}`}</Text>
+            </Pressable>
           );
         })}
       </View>
@@ -486,6 +496,7 @@ const useStyles = makeStyles((t) => ({
   evoCell: { flex: 1, alignItems: 'center', paddingVertical: 10, paddingHorizontal: 4, borderRadius: 14, borderWidth: 1, borderColor: t.colors.border, backgroundColor: t.colors.surfaceAlt, gap: 4 },
   evoName: { fontFamily: fonts.semibold, fontSize: 12, color: t.colors.text.primary, textAlign: 'center', minHeight: 30 },
   evoLv: { fontFamily: fonts.display, fontSize: 10.5, letterSpacing: 0.8, color: t.colors.text.tertiary, textTransform: 'uppercase' },
+  evoHint: { fontFamily: fonts.body, fontSize: 12.5, color: t.colors.text.tertiary, marginBottom: 6 },
   evoNext: { fontFamily: fonts.body, fontSize: 13, color: t.colors.text.secondary, marginTop: 12 },
   famRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
   famChip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, height: 30, borderRadius: 15, borderWidth: 1, borderColor: t.colors.border },

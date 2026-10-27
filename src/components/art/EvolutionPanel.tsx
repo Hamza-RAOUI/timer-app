@@ -83,7 +83,10 @@ export const EvolutionPanel: React.FC<EvolutionPanelProps> = ({ skillKey, width,
 
   const size = Math.max(120, Math.min(height * 0.66, width * 0.82, maxCreature ?? Infinity));
   const nameRoom = nameMaxWidth ?? width * 0.8;
-  const nameSize = Math.max(28, Math.min(nameRoom / (evo.name.length * 0.62), height * 0.11, 96));
+  // The name may wrap onto two lines: size it for the longer half (or the longest word).
+  const words = evo.name.split(' ');
+  const lineChars = Math.max(...words.map((w) => w.length), Math.ceil(evo.name.length / 2));
+  const nameSize = Math.max(26, Math.min(nameRoom / (lineChars * 0.62), height * 0.11, 92));
 
   // Slide in on mount and whenever the creature changes; then idle bob.
   const enter = useSharedValue(reduced ? 1 : 0);
@@ -142,7 +145,7 @@ export const EvolutionPanel: React.FC<EvolutionPanelProps> = ({ skillKey, width,
         <LinearGradient colors={[rgba(fadeTo, 1), rgba(fadeTo, 0)]} locations={[0, 0.45]} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={fill} />
         <Animated.View style={[{ position: 'absolute', right: Math.min(width * 0.08, 48), bottom: height * 0.1 }, creature]}>
           {interactive ? (
-            <Pressable onPress={press} accessibilityRole="button" accessibilityLabel={`${evo.name}, your ${evo.family.line.toLowerCase()} creature. Tap it.`}>
+            <Pressable onPress={press} accessibilityRole="button" accessibilityLabel={`${evo.name}, your creature. Tap it.`}>
               {creatureNode}
             </Pressable>
           ) : (
@@ -153,16 +156,12 @@ export const EvolutionPanel: React.FC<EvolutionPanelProps> = ({ skillKey, width,
 
       {showName && (
         <Animated.View style={[{ position: 'absolute', right: width * 0.06, top: height * 0.07, alignItems: 'flex-end', maxWidth: nameRoom, pointerEvents: 'none' }, nameIn]}>
-          <Text style={{ fontFamily: fonts.display, fontSize: nameSize * 0.34, color: acc.main === t.colors.gold ? t.colors.goldText : ink, letterSpacing: 1.5, textTransform: 'uppercase', opacity: 0.85 }}>
-            {evo.family.line} · {evo.species} {evo.stage}/5
-          </Text>
           <Text
             style={{ fontFamily: fonts.display, fontSize: nameSize, lineHeight: nameSize * 1.02, color: ink, letterSpacing: -1, textAlign: 'right', ...hardTextShadow(t.colors.highlight, Math.max(2, Math.round(nameSize / 24))) }}
             numberOfLines={2}
           >
             {evo.name.toLowerCase()}
           </Text>
-          <Text style={{ fontFamily: fonts.semibold, fontSize: Math.max(12, nameSize * 0.24), color: ink, opacity: 0.75, marginTop: 4, fontStyle: 'italic' }}>“{evo.quip}”</Text>
         </Animated.View>
       )}
     </View>
