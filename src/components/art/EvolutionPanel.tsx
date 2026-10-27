@@ -35,7 +35,7 @@ const usePointer = (enabled: boolean) => {
  * Easter egg: tap a Rock (or Monolith) five times quickly and it raises one eyebrow
  * and drops a line. Original jokes only — no real person's face or catchphrase.
  */
-export const useRockEasterEgg = (stage: Stage) => {
+export const useRockEasterEgg = (stage: Stage, name: string) => {
   const [browRaise, setBrowRaise] = useState(false);
   const taps = useRef<number[]>([]);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -49,11 +49,11 @@ export const useRockEasterEgg = (stage: Stage) => {
     taps.current = [];
     joke.current = (joke.current + 1) % ROCK_JOKES.length;
     setBrowRaise(true);
-    useRewardStore.getState().pushToast({ kind: 'info', title: 'Mike the Rock says', body: ROCK_JOKES[joke.current], icon: 'happy' });
+    useRewardStore.getState().pushToast({ kind: 'info', title: `${name} says`, body: ROCK_JOKES[joke.current], icon: 'happy' });
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => setBrowRaise(false), 2600);
     return true;
-  }, [stage]);
+  }, [stage, name]);
   return { browRaise, onTap };
 };
 
@@ -79,7 +79,7 @@ export const EvolutionPanel: React.FC<EvolutionPanelProps> = ({ skillKey, width,
   const reduced = useReducedMotionPref();
   const evo = useEvolution(skillKey);
   const acc = evo.stage === 5 ? { main: t.colors.gold, dark: t.colors.gold } : FAMILY_ACCENT[evo.family.key];
-  const { browRaise, onTap } = useRockEasterEgg(evo.stage);
+  const { browRaise, onTap } = useRockEasterEgg(evo.stage, evo.name);
 
   const size = Math.max(120, Math.min(height * 0.66, width * 0.82, maxCreature ?? Infinity));
   const nameRoom = nameMaxWidth ?? width * 0.8;

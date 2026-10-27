@@ -364,7 +364,7 @@ export const LEGAL_NOTICE: LegalDoc = {
           list: [
             'Inter typeface by Rasmus Andersson — SIL Open Font License 1.1 (bundled via @expo-google-fonts/inter, MIT).',
             'Ionicons by Ionic — MIT License (via @expo/vector-icons).',
-            'Hourglass, rank emblems, skill crests, scenery, the evolving creatures and the Flowkeeper logo — original artwork drawn in code for Flowglass.',
+            'Hourglass, rank emblems, skill crests, scenery, the evolving creatures and the Timekeeper logo — original artwork drawn in code for Flowglass.',
             'Ambience and lo-fi tracks — recordings from Pixabay (Pixabay Content License), trimmed and looped for Flowglass. Sources are listed in public/audio/CREDITS.md.',
           ],
         },

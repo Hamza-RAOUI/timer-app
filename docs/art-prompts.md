@@ -26,7 +26,7 @@ growing up*: same eyes, same proportions, more detail each stage.
 | 2 | Pebble | rounded beige pebble, small green sprout on top, blush cheeks | sturdier, more confident |
 | 3 | Rock | faceted blue-grey stone with stubby arms, teal crystals on the head, thick eyebrows | personality, attitude |
 | 4 | Monolith | tall dark stone golem with big shoulders, glowing gold sand cracks, glowing eyes | imposing, legendary-in-progress |
-| 5 | Flowkeeper | hooded sand mage (see below) | the mascot |
+| 5 | Timekeeper | hooded sand mage (see below) | the mascot |
 
 ## Families
 
@@ -50,7 +50,7 @@ growing up*: same eyes, same proportions, more detail each stage.
 > faceted rock carrying a glowing lantern → a stone golem in a dark teal travelling cloak
 > holding a lantern. *Funny title: The Side Quest Enjoyer.*
 
-## The Flowkeeper (mascot + logo)
+## The Timekeeper (mascot + logo)
 
 > An original mysterious sand mage mascot: midnight-blue hood with two swept-back points,
 > thin gold trim and a gold diamond gem on the forehead; the face is hidden in shadow with
@@ -59,7 +59,7 @@ growing up*: same eyes, same proportions, more detail each stage.
 > calm, a little mischievous. Palette: midnight blue, warm gold, a touch of teal.
 
 **App icon variant:**
-> Only the Flowkeeper's hooded head, front view, centered on a rounded-square midnight-blue
+> Only the Timekeeper's hooded head, front view, centered on a rounded-square midnight-blue
 > tile: hood with gold trim and diamond gem, shadowed face with two glowing yellow eyes, one
 > gold sand grain falling below. Flat, bold shapes, readable at 32×32 px, no text.
 

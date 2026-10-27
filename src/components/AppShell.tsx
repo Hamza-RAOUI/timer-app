@@ -9,6 +9,7 @@ import { APP_VIEWS, useUiStore } from '../stores/uiStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import { makeStyles, useTheme } from '../theme/ThemeProvider';
 import { fonts } from '../theme/typography';
+import { FlowglassMark } from './art/FlowglassMark';
 import { ConsentBanner } from './feedback/ConsentBanner';
 import { EvolutionOverlay } from './feedback/EvolutionOverlay';
 import { LevelUpOverlay } from './feedback/LevelUpOverlay';
@@ -131,9 +132,12 @@ export const AppShell: React.FC = () => {
         <Pressable onPress={openDrawer} style={styles.menuBtn} accessibilityRole="button" accessibilityLabel="Open menu">
           <Ionicons name="menu" size={22} color={t.colors.text.primary} />
         </Pressable>
-        <Text style={styles.topTitle} accessibilityRole="header">
-          {VIEW_TITLE[view]}
-        </Text>
+        <View style={styles.topCenter}>
+          <FlowglassMark size={28} />
+          <Text style={styles.topTitle} accessibilityRole="header">
+            {VIEW_TITLE[view]}
+          </Text>
+        </View>
         <Pressable
           onPress={() => setThemeMode(t.isDark ? 'light' : 'dark')}
           style={styles.menuBtn}
@@ -189,6 +193,7 @@ const useStyles = makeStyles((t) => ({
   },
   menuBtn: { width: 42, height: 42, borderRadius: 13, alignItems: 'center', justifyContent: 'center', backgroundColor: t.colors.surface, borderWidth: 1, borderColor: t.colors.border },
   expandBtn: { position: 'absolute', left: 16, zIndex: 10, width: 42, height: 42, borderRadius: 13, alignItems: 'center', justifyContent: 'center', backgroundColor: t.colors.surface, borderWidth: 1, borderColor: t.colors.border, ...t.shadow.sm },
+  topCenter: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   topTitle: { fontFamily: fonts.display, fontSize: 16, letterSpacing: 1.6, color: t.colors.text.primary, textTransform: 'uppercase', transform: [{ skewX: '-8deg' }] },
   drawerRoot: { flex: 1, flexDirection: 'row' },
   drawerBackdrop: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, backgroundColor: t.colors.overlay },

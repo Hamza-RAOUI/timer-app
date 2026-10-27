@@ -279,10 +279,10 @@ export const SettingsView: React.FC = () => {
         )}
 
         <View style={styles.about}>
-          <FlowglassMark size={56} label="Flowglass logo: the Flowkeeper" />
+          <FlowglassMark size={56} label="Flowglass logo: the Timekeeper" />
           <Text style={styles.aboutName}>Flowglass</Text>
           <Text style={styles.aboutVer}>v{APP_VERSION} · flow + hourglass</Text>
-          <Text style={styles.aboutCredits}>Inter typeface (SIL Open Font License 1.1) · Ionicons (MIT) · all illustrations, creatures and the Flowkeeper logo are original</Text>
+          <Text style={styles.aboutCredits}>Inter typeface (SIL Open Font License 1.1) · Ionicons (MIT) · all illustrations, creatures and the Timekeeper logo are original</Text>
         </View>
       </ScrollView>
     </View>

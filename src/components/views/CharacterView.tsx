@@ -118,7 +118,7 @@ const EvolutionCard: React.FC = () => {
   const thumb = width < 640 ? 64 : 92;
   const fam = evo.family.key;
   const levels = familyLevels(skillLevelsOf(p.skills));
-  const need = RPG_CONFIG.evolution.flowkeeperFamilyLevel;
+  const need = RPG_CONFIG.evolution.timekeeperFamilyLevel;
   const at = RPG_CONFIG.evolution.stageLevels;
 
   return (
@@ -158,9 +158,9 @@ const EvolutionCard: React.FC = () => {
       </View>
       <Text style={styles.evoNext}>
         {evo.next == null
-          ? 'Legendary form reached. The Flowkeeper bows to no deadline.'
+          ? 'Legendary form reached. The Timekeeper bows to no deadline.'
           : evo.next.needsAllFamilies
-            ? `Ready for the Flowkeeper — train every skill to LV ${need} to unlock it.`
+            ? `Ready for the Timekeeper — train every skill to LV ${need} to unlock it.`
             : `Next: ${evo.next.name} at skill LV ${evo.next.level}.`}
         {evo.stage === 3 || evo.stage === 4 ? '  Psst: rocks hate being poked.' : ''}
       </Text>

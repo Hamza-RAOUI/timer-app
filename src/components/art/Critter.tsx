@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import Svg, { Circle, Defs, Ellipse, G, LinearGradient, Path, Polygon, RadialGradient, Rect, Stop } from 'react-native-svg';
 import type { FamilyKey, Stage } from '../../lib/rpg';
 
 /**
  * The evolving Flowglass creature — original vector art, one component for every
  * family × stage so each line reads as the *same* creature growing up:
- * Grain → Pebble → Rock → Monolith → Flowkeeper (the mascot, shared by all families).
+ * Grain → Pebble → Rock → Monolith → Timekeeper (the wizard-hat mascot, shared by all families).
  * Family accessories: Scholar (glasses, book, cap, runes), Builder (hard hat, hammer,
  * plates), Creator (beret, brush, notes), Wanderer (scarf, staff, lantern, cloak).
  */
@@ -61,7 +61,10 @@ export const Critter: React.FC<CritterProps> = ({ family, stage, size, browRaise
     };
   }, [blink, silhouette]);
 
-  const uid = `${family}${stage}${silhouette ? 's' : ''}`;
+  // Unique per instance: the hidden TimerView draws the same creature, and Chrome won't
+  // paint a gradient whose first definition sits in a display:none subtree.
+  const rid = useId().replace(/[^A-Za-z0-9_-]/g, '');
+  const uid = `${family}${stage}${silhouette ? 's' : ''}${rid}`;
   return (
     <Svg width={size} height={size} viewBox="0 0 200 200">
       <Defs>
@@ -78,7 +81,7 @@ export const Critter: React.FC<CritterProps> = ({ family, stage, size, browRaise
       <Ellipse cx={100} cy={184} rx={stage === 5 ? 54 : 30 + stage * 8} ry={7} fill="#000" opacity={0.18} />
       <G opacity={silhouette ? 0.9 : 1}>
         {stage === 5 ? (
-          <Flowkeeper uid={uid} closed={closed} silhouette={silhouette} />
+          <Timekeeper uid={uid} closed={closed} silhouette={silhouette} />
         ) : (
           <Creature uid={uid} family={family} stage={stage} closed={closed} browRaise={browRaise} silhouette={silhouette} />
         )}
@@ -482,46 +485,55 @@ const Front: React.FC<{ family: FamilyKey; stage: Exclude<Stage, 5>; a: (typeof 
   );
 };
 
-// ───────────── Stage 5: the Flowkeeper (mascot) ─────────────
+// ───────────── Stage 5: the Timekeeper (mascot) ─────────────
 /** 4-point sparkle centred on (x, y). */
 const sparkle = (x: number, y: number, r: number) => `M${x} ${y - r} Q${x} ${y} ${x + r} ${y} Q${x} ${y} ${x} ${y + r} Q${x} ${y} ${x - r} ${y} Q${x} ${y} ${x} ${y - r} Z`;
 
 const SPARKLES = [
-  [30, 52, 7, '#E9D5FF'],
-  [176, 40, 6, '#E9D5FF'],
-  [20, 120, 4, '#C4B5FD'],
-  [184, 112, 5, GOLD],
-  [62, 18, 4, GOLD],
-  [150, 16, 3.5, '#C4B5FD'],
+  [24, 40, 7, '#E9D5FF'],
+  [182, 34, 6, '#E9D5FF'],
+  [16, 176, 4, '#C4B5FD'],
+  [190, 120, 5, GOLD],
+  [88, 10, 4, GOLD],
+  [170, 150, 3.5, '#C4B5FD'],
 ] as const;
 const GRAINS = [
-  [44, 84, 2],
-  [160, 70, 1.8],
-  [176, 150, 2],
-  [26, 160, 1.6],
-  [120, 12, 1.6],
+  [30, 90, 2],
+  [178, 74, 1.8],
+  [186, 160, 2],
+  [134, 196, 1.6],
+  [60, 20, 1.6],
 ] as const;
 
-/** The grain, grown up: a golden little body under a midnight hood, eyes glowing, hourglass in hand. */
-const Flowkeeper: React.FC<{ uid: string; closed: boolean; silhouette: boolean }> = ({ uid, closed, silhouette }) => {
+/**
+ * The grain, grown up: a golden little body in a wizard hat (curled tip, gold ears
+ * poking out, diamond emblem), glowing eyes, a flowing violet cloak and a bronze
+ * hourglass held up high.
+ */
+const Timekeeper: React.FC<{ uid: string; closed: boolean; silhouette: boolean }> = ({ uid, closed, silhouette }) => {
   const dark = '#2A2540';
-  const hood = silhouette ? dark : `url(#hood${uid})`;
-  const body = silhouette ? dark : `url(#fkBody${uid})`;
+  const hat = silhouette ? dark : `url(#hood${uid})`;
+  const body = silhouette ? dark : `url(#tkBody${uid})`;
   const gold = silhouette ? dark : GOLD;
+  const bronze = silhouette ? dark : '#9A6432';
   return (
     <G>
       <Defs>
-        <LinearGradient id={`fkBody${uid}`} x1="0" y1="0" x2="1" y2="1">
+        <LinearGradient id={`tkBody${uid}`} x1="0" y1="0" x2="1" y2="1">
           <Stop offset="0" stopColor="#FFD27A" />
           <Stop offset="1" stopColor="#D9932F" />
         </LinearGradient>
-        <LinearGradient id={`fkSwirl${uid}`} x1="0" y1="0" x2="1" y2="0">
+        <LinearGradient id={`tkCloak${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <Stop offset="0" stopColor="#7A55F0" />
+          <Stop offset="1" stopColor="#2A1B66" />
+        </LinearGradient>
+        <LinearGradient id={`tkSwirl${uid}`} x1="0" y1="0" x2="1" y2="0">
           <Stop offset="0" stopColor="#A78BFA" stopOpacity={0} />
-          <Stop offset="0.5" stopColor="#A78BFA" stopOpacity={0.9} />
+          <Stop offset="0.5" stopColor="#C084FC" stopOpacity={0.9} />
           <Stop offset="1" stopColor="#6C7BFF" stopOpacity={0.1} />
         </LinearGradient>
-        <RadialGradient id={`fkSand${uid}`} cx="50%" cy="50%" r="50%">
-          <Stop offset="0" stopColor="#FFC56B" stopOpacity={0.7} />
+        <RadialGradient id={`tkSand${uid}`} cx="50%" cy="50%" r="50%">
+          <Stop offset="0" stopColor="#FFC56B" stopOpacity={0.75} />
           <Stop offset="1" stopColor="#FFC56B" stopOpacity={0} />
         </RadialGradient>
       </Defs>
@@ -529,83 +541,109 @@ const Flowkeeper: React.FC<{ uid: string; closed: boolean; silhouette: boolean }
       {/* magic trails */}
       {!silhouette && (
         <G fill="none" strokeLinecap="round">
-          <Path d="M24 158 C4 116 30 62 76 64" stroke={`url(#fkSwirl${uid})`} strokeWidth={7} />
-          <Path d="M178 168 C200 126 178 86 146 88" stroke={`url(#fkSwirl${uid})`} strokeWidth={5} />
-          <Path d="M36 180 C72 160 122 196 170 174" stroke={`url(#fkSwirl${uid})`} strokeWidth={4} opacity={0.8} />
-          <Path d="M54 40 C70 20 96 14 118 20" stroke="#C4B5FD" strokeWidth={2} opacity={0.5} />
+          <Path d="M150 150 C176 140 194 118 190 92" stroke={`url(#tkSwirl${uid})`} strokeWidth={6} />
+          <Path d="M162 178 C186 172 198 156 198 136" stroke={`url(#tkSwirl${uid})`} strokeWidth={4} />
+          <Path d="M36 190 C70 174 120 200 178 184" stroke={`url(#tkSwirl${uid})`} strokeWidth={4} opacity={0.8} />
+          <Path d="M156 36 C180 48 190 72 180 96" stroke="#C4B5FD" strokeWidth={2} opacity={0.5} />
         </G>
       )}
 
-      {/* cape */}
-      <Path d="M64 108 C32 128 26 168 40 186 L160 186 C176 168 170 128 136 108 Z" fill={silhouette ? dark : '#1E1B4B'} />
-      {!silhouette && <Path d="M64 108 C32 128 26 168 40 186" stroke="#7C6CF0" strokeWidth={3} fill="none" opacity={0.7} />}
-      {!silhouette && <Path d="M40 186 C34 176 22 178 16 186 Z" fill="#1E1B4B" />}
+      {/* flowing cloak */}
+      <Path
+        d="M84 118 C70 140 66 166 74 186 C90 180 100 186 110 192 C122 180 140 182 158 190 C150 176 162 168 184 170 C170 160 166 146 172 132 C160 138 146 134 136 122 C124 112 96 110 84 118 Z"
+        fill={silhouette ? dark : `url(#tkCloak${uid})`}
+      />
+      {!silhouette && (
+        <G fill="none" strokeLinecap="round">
+          <Path d="M136 122 C146 134 160 138 172 132 C166 146 170 160 184 170" stroke="#C4B5FD" strokeWidth={2.5} opacity={0.8} />
+          <Path d="M128 138 C136 154 144 166 152 178" stroke="#1E1546" strokeWidth={3} opacity={0.55} />
+          <Path d="M80 140 C76 158 78 172 84 182" stroke="#1E1546" strokeWidth={3} opacity={0.5} />
+        </G>
+      )}
 
-      {/* golden body + feet */}
-      <Ellipse cx={86} cy={180} rx={11} ry={6} fill={silhouette ? dark : '#C9852A'} />
-      <Ellipse cx={114} cy={180} rx={11} ry={6} fill={silhouette ? dark : '#C9852A'} />
-      <Path d="M76 116 C68 140 70 166 84 178 L116 178 C130 166 132 140 124 116 Z" fill={body} />
-      {!silhouette && <Ellipse cx={88} cy={150} rx={7} ry={12} fill="#FFE6A8" opacity={0.6} />}
-      {/* scarf + collar gem */}
-      <Path d="M70 118 C84 128 116 128 130 118 L126 132 C112 140 88 140 74 132 Z" fill={silhouette ? dark : '#3B2F8F'} />
-      <Polygon points="100,124 108,134 100,144 92,134" fill={gold} />
-      {!silhouette && <Polygon points="100,128 104,134 100,140 96,134" fill="#FFF3C4" />}
-      {/* arm reaching to the hourglass */}
-      <Path d="M122 130 C132 128 140 128 146 132" stroke={silhouette ? dark : '#D9932F'} strokeWidth={9} strokeLinecap="round" fill="none" />
+      {/* legs + body */}
+      <Path d="M92 156 C86 166 83 176 85 182 L97 182 C99 174 101 166 103 160 Z" fill={silhouette ? dark : '#D9932F'} />
+      <Path d="M116 156 C122 166 125 176 123 182 L111 182 C109 174 107 166 105 160 Z" fill={silhouette ? dark : '#C9852A'} />
+      <Path d="M86 126 C82 146 86 162 104 166 C122 162 126 146 122 126 Z" fill={body} />
+      {!silhouette && <Ellipse cx={96} cy={146} rx={6} ry={11} fill="#FFE6A8" opacity={0.55} />}
+      {/* resting arm */}
+      <Path d="M121 132 C128 138 132 146 130 152" stroke={silhouette ? dark : '#D9932F'} strokeWidth={8} strokeLinecap="round" fill="none" />
 
-      {/* hood with swept golden points */}
-      <Path d="M58 60 C40 48 28 30 22 10 C40 26 58 38 74 46 Z" fill={gold} />
-      <Path d="M142 60 C160 48 172 30 178 10 C160 26 142 38 126 46 Z" fill={gold} />
-      {!silhouette && <Path d="M58 60 C46 50 36 36 30 22 C44 34 58 42 70 48 Z" fill="#B8862A" />}
-      {!silhouette && <Path d="M142 60 C154 50 164 36 170 22 C156 34 142 42 130 48 Z" fill="#B8862A" />}
-      <Path d="M100 22 C134 22 156 46 158 78 C160 100 150 114 132 120 L68 120 C50 114 40 100 42 78 C44 46 66 22 100 22 Z" fill={hood} />
+      {/* collar + gem */}
+      <Path d="M78 118 L130 118 L124 132 L104 140 L84 132 Z" fill={silhouette ? dark : '#4C2F9E'} />
+      {!silhouette && <Path d="M78 118 L130 118" stroke="#8B5CF6" strokeWidth={2} />}
+      <Polygon points="104,124 110,132 104,140 98,132" fill={gold} />
+
+      {/* head */}
+      <Ellipse cx={104} cy={106} rx={25} ry={20} fill={body} />
       {!silhouette && (
         <>
-          <Path d="M100 22 C134 22 156 46 158 78 C160 100 150 114 132 120 L68 120 C50 114 40 100 42 78 C44 46 66 22 100 22 Z" fill="none" stroke={GOLD} strokeWidth={3} />
-          <Path d="M64 40 C76 30 88 26 100 26" stroke="#5A64D8" strokeWidth={4} strokeLinecap="round" fill="none" opacity={0.7} />
-          {/* face in shadow + glowing eyes */}
-          <Ellipse cx={100} cy={88} rx={34} ry={25} fill="#0B0F2A" />
+          <Ellipse cx={104} cy={96} rx={23} ry={8} fill="#7A4A14" opacity={0.45} />
           {closed ? (
-            <G stroke="#FFE08A" strokeWidth={3} strokeLinecap="round">
-              <Path d="M78 90 L92 92" />
-              <Path d="M108 92 L122 90" />
+            <G stroke={INK} strokeWidth={3} strokeLinecap="round">
+              <Path d="M86 108 L99 109" />
+              <Path d="M109 109 L122 108" />
             </G>
           ) : (
             <G>
-              <Circle cx={85} cy={91} r={11} fill="#FFE08A" opacity={0.22} />
-              <Circle cx={115} cy={91} r={11} fill="#FFE08A" opacity={0.22} />
-              <Path d="M74 84 L95 91 L78 99 Z" fill="#FFE08A" />
-              <Path d="M126 84 L105 91 L122 99 Z" fill="#FFE08A" />
-              <Circle cx={84} cy={91} r={2} fill="#FFFFFF" />
-              <Circle cx={116} cy={91} r={2} fill="#FFFFFF" />
+              <Circle cx={93} cy={107} r={9} fill="#FFE08A" opacity={0.3} />
+              <Circle cx={115} cy={107} r={9} fill="#FFE08A" opacity={0.3} />
+              <Path d="M84 104 Q92 100 100 108 Q92 114 84 110 Z" fill="#FFE08A" />
+              <Path d="M124 104 Q116 100 108 108 Q116 114 124 110 Z" fill="#FFE08A" />
+              <Circle cx={94} cy={108} r={2.6} fill={INK} />
+              <Circle cx={114} cy={108} r={2.6} fill={INK} />
+              <Path d="M82 101 L100 106" stroke={INK} strokeWidth={2.6} strokeLinecap="round" />
+              <Path d="M126 101 L108 106" stroke={INK} strokeWidth={2.6} strokeLinecap="round" />
             </G>
           )}
-          {/* gem */}
-          <Circle cx={100} cy={46} r={14} fill={GOLD} opacity={0.18} />
-          <Polygon points="100,32 111,46 100,60 89,46" fill={GOLD} />
-          <Polygon points="100,38 105.5,46 100,54 94.5,46" fill="#FFF3C4" />
+          <Path d="M99 120 Q104 118 109 120" stroke="#8A5A1F" strokeWidth={2} strokeLinecap="round" fill="none" />
         </>
       )}
 
-      {/* ornate hourglass */}
-      <G transform="translate(156 132) rotate(-10)">
-        {!silhouette && <Circle cx={0} cy={0} r={38} fill={`url(#fkSand${uid})`} />}
-        <Rect x={-23} y={-38} width={46} height={8} rx={4} fill={gold} />
-        <Rect x={-23} y={30} width={46} height={8} rx={4} fill={gold} />
-        <Rect x={-19} y={-31} width={4} height={62} rx={2} fill={silhouette ? dark : '#B8862A'} />
-        <Rect x={15} y={-31} width={4} height={62} rx={2} fill={silhouette ? dark : '#B8862A'} />
+      {/* gold ears poking out of the hat */}
+      <Path d="M72 84 L36 58 L52 62 L44 48 L80 76 Z" fill={gold} />
+      <Path d="M136 84 L172 58 L156 62 L164 48 L128 76 Z" fill={gold} />
+      {!silhouette && <Path d="M72 80 L48 62" stroke="#B8862A" strokeWidth={3} strokeLinecap="round" />}
+      {!silhouette && <Path d="M136 80 L160 62" stroke="#B8862A" strokeWidth={3} strokeLinecap="round" />}
+
+      {/* wizard hat: brim, cone with a curled tip, diamond emblem */}
+      <Path d="M44 92 C60 78 148 76 166 90 C156 100 56 104 44 92 Z" fill={hat} />
+      <Path
+        d="M74 86 C78 62 88 40 104 26 C114 18 130 12 146 16 C152 18 154 22 150 24 C136 24 126 32 122 46 C118 60 124 74 136 86 Z"
+        fill={hat}
+      />
+      {!silhouette && (
+        <>
+          <Path d="M44 92 C60 78 148 76 166 90" stroke="#5A64D8" strokeWidth={2.5} fill="none" />
+          <Path d="M77 82 C80 62 90 42 104 28" stroke="#5A64D8" strokeWidth={3} strokeLinecap="round" fill="none" opacity={0.7} />
+          <Circle cx={104} cy={62} r={14} fill={GOLD} opacity={0.18} />
+          <Polygon points="104,48 114,62 104,76 94,62" fill={GOLD} />
+          <Polygon points="104,53 109,62 104,71 99,62" fill="#FFF3C4" />
+        </>
+      )}
+
+      {/* bronze hourglass, held up */}
+      <G transform="translate(52 134) rotate(-8)">
+        {!silhouette && <Circle cx={0} cy={0} r={42} fill={`url(#tkSand${uid})`} />}
+        <Rect x={-23} y={-42} width={46} height={8} rx={4} fill={bronze} />
+        <Rect x={-23} y={34} width={46} height={8} rx={4} fill={bronze} />
+        <Rect x={-19} y={-35} width={4} height={70} rx={2} fill={silhouette ? dark : '#7A4A22'} />
+        <Rect x={15} y={-35} width={4} height={70} rx={2} fill={silhouette ? dark : '#7A4A22'} />
         {!silhouette && (
           <>
-            <Path d="M-13 -30 L13 -30 C13 -13 5 -4 2 0 C5 4 13 13 13 30 L-13 30 C-13 13 -5 4 -2 0 C-5 -4 -13 -13 -13 -30 Z" fill="#DCE6FF" opacity={0.45} />
-            <Path d="M-9 -22 L9 -22 C7 -11 2 -4 0 -2 C-2 -4 -7 -11 -9 -22 Z" fill="#FFB547" />
-            <Path d="M-11 28 L11 28 C9 19 4 14 0 13 C-4 14 -9 19 -11 28 Z" fill="#FFB547" />
-            <Rect x={-0.9} y={-2} width={1.8} height={16} fill="#FFD27A" />
-            <Path d="M-10 -26 C-10 -16 -6 -8 -3 -4" stroke="#FFFFFF" strokeWidth={1.6} opacity={0.6} fill="none" />
+            <Rect x={-23} y={-42} width={46} height={3} rx={1.5} fill="#D9A066" />
+            <Rect x={-23} y={34} width={46} height={3} rx={1.5} fill="#D9A066" />
+            <Path d="M-13 -34 L13 -34 C13 -15 5 -4 2 0 C5 4 13 15 13 34 L-13 34 C-13 15 -5 4 -2 0 C-5 -4 -13 -15 -13 -34 Z" fill="#DCE6FF" opacity={0.45} />
+            <Path d="M-9 -24 L9 -24 C7 -12 2 -4 0 -2 C-2 -4 -7 -12 -9 -24 Z" fill="#FFB547" />
+            <Path d="M-11 32 L11 32 C9 22 4 16 0 15 C-4 16 -9 22 -11 32 Z" fill="#FFB547" />
+            <Rect x={-0.9} y={-2} width={1.8} height={18} fill="#FFD27A" />
+            <Path d="M-10 -30 C-10 -18 -6 -9 -3 -4" stroke="#FFFFFF" strokeWidth={1.6} opacity={0.6} fill="none" />
           </>
         )}
       </G>
-      {/* hand */}
-      <Circle cx={146} cy={133} r={8} fill={silhouette ? dark : '#E8A945'} />
+      {/* arm reaching up to the hourglass */}
+      <Path d="M90 128 C80 118 72 106 66 96" stroke={silhouette ? dark : '#D9932F'} strokeWidth={9} strokeLinecap="round" fill="none" />
+      <Circle cx={64} cy={93} r={7.5} fill={silhouette ? dark : '#E8A945'} />
 
       {!silhouette && (
         <>

@@ -69,7 +69,7 @@ Dev-only testing aid: `http://localhost:8081/?devspeed=60` runs timers 60× fast
 - **Game UI** (`src/components/game/`, `art/`, `feedback/`): SkewTag, XpBar,
   SectionHeader, QuestRow, GhostWord, StripeField; original SVG art (RankEmblem,
   SkillCrest, SandScene); `Critter` — the evolving creature (4 families × 5 stages,
-  Grain → Pebble → Rock → Monolith → Flowkeeper), shown by `EvolutionPanel` behind the
+  Grain → Pebble → Rock → Monolith → Timekeeper), shown by `EvolutionPanel` behind the
   timer and in the Character hero; `FlowglassMark` — the logo (keep `public/favicon.svg` in sync);
   RewardPanel, LevelUpOverlay, ToastStack, ProSheet,
   ConsentBanner.

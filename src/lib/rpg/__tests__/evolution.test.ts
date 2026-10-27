@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { RPG_CONFIG } from '../config';
-import { evolutionFor, familyForSkill, familyLevels, flowkeeperStatus, ROCK_JOKES, stageForLevel } from '../evolution';
+import { evolutionFor, FAMILIES, FAMILY_KEYS, familyForSkill, familyLevels, timekeeperStatus, ROCK_JOKES, stageForLevel } from '../evolution';
 
 const all = (level: number) => ({ study: level, work: level, hobby: level, personal: level });
 
@@ -26,17 +26,17 @@ describe('stageForLevel', () => {
     assert.equal(stageForLevel(s3, false), 3);
     assert.equal(stageForLevel(s4, false), 4);
   });
-  it('caps at stage 4 until the Flowkeeper is unlocked', () => {
+  it('caps at stage 4 until the Timekeeper is unlocked', () => {
     assert.equal(stageForLevel(40, false), 4);
     assert.equal(stageForLevel(40, true), 5);
   });
 });
 
-describe('flowkeeperStatus', () => {
+describe('timekeeperStatus', () => {
   it('needs every family at the required level', () => {
-    const need = RPG_CONFIG.evolution.flowkeeperFamilyLevel;
-    assert.equal(flowkeeperStatus(all(need)).unlocked, true);
-    const s = flowkeeperStatus({ ...all(need), hobby: need - 1 });
+    const need = RPG_CONFIG.evolution.timekeeperFamilyLevel;
+    assert.equal(timekeeperStatus(all(need)).unlocked, true);
+    const s = timekeeperStatus({ ...all(need), hobby: need - 1 });
     assert.equal(s.unlocked, false);
     assert.deepEqual(s.missing, ['creator']);
   });
@@ -52,8 +52,14 @@ describe('evolutionFor', () => {
   it('starts every skill as a stage-1 creature', () => {
     const e = evolutionFor('study', {});
     assert.equal(e.stage, 1);
-    assert.equal(e.name, 'Unemployed Grain');
+    assert.equal(e.name, 'Professional Procrastinator');
     assert.equal(e.next?.stage, 2);
+  });
+  it('gives every family its own name at every stage', () => {
+    for (let i = 0; i < 5; i++) {
+      const names = FAMILY_KEYS.map((f) => FAMILIES[f].names[i]);
+      assert.equal(new Set(names).size, names.length, `stage ${i + 1}: ${names.join(', ')}`);
+    }
   });
   it('flags a stage-5 wait when only other families lag', () => {
     const e = evolutionFor('work', { work: 20 });
@@ -62,10 +68,10 @@ describe('evolutionFor', () => {
     assert.equal(e.next?.stage, 5);
     assert.equal(e.next?.needsAllFamilies, true);
   });
-  it('becomes the Flowkeeper when all families are trained', () => {
+  it('becomes the Timekeeper when all families are trained', () => {
     const e = evolutionFor('hobby', { ...all(10), hobby: 15 });
     assert.equal(e.stage, 5);
-    assert.equal(e.name, 'The Flow Demon');
+    assert.equal(e.name, 'The Main Character');
     assert.equal(e.next, null);
   });
   it('honours a dev preview level without touching real progress', () => {
@@ -76,7 +82,7 @@ describe('evolutionFor', () => {
     const e = evolutionFor('study', { study: 10 }, { chosenStage: 2 });
     assert.equal(e.stage, 2);
     assert.equal(e.reached, 4);
-    assert.equal(e.name, 'The Paperweight');
+    assert.equal(e.name, 'The Highlighter Addict');
     assert.equal(e.next?.stage, 5); // progress still follows the real stage
     assert.equal(evolutionFor('study', { study: 3 }, { chosenStage: 4 }).stage, 2);
   });
