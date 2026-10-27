@@ -16,7 +16,10 @@
 3. **Delete the Supabase access token** (supabase.com/dashboard/account/tokens) — only needed
    for the setup script. Consider rotating the Resend key too (it was pasted in a chat).
 4. **Merge `flowglass-rpg-sync` into `master`** (PR on GitHub) so Vercel deploys it to production.
-5. **Characters** — pick numbers from `.claude/character-candidates.jpg` and which class each replaces.
+5. **App icons** — the in-app logo and `public/favicon.svg` are the new Flowkeeper; the PNG app
+   icons (`assets/images/icon.png`, `public/icon-192.png`/`icon-512.png`, Android adaptive icons)
+   still show the old design. Export them from `public/favicon.svg` or a painted version
+   (prompts in `docs/art-prompts.md`).
 
 ## Prompt to paste next time
 > Continue Flowglass from NEXT_STEPS.md. I signed in with the code email and ran a session —

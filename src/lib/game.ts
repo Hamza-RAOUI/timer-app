@@ -13,7 +13,7 @@ import { useStatsStore, type NewSession } from '../stores/statsStore';
 import { useUiStore } from '../stores/uiStore';
 import { trackEvent } from './analytics';
 import { playDing, playLevelUp } from './sound';
-import { buildReward, computeProgress, type Progress, type Reward, type SessionEvent } from './rpg';
+import { buildReward, computeProgress, evolutionFor, skillLevelsOf, type Evolution, type Progress, type Reward, type SessionEvent } from './rpg';
 
 /** Hourglass flip length; the XP panel waits for it. */
 export const FLIP_MS = 820;
@@ -38,6 +38,13 @@ export const useProgress = (): Progress => {
   const proSince = useSettingsStore((s) => s.proSince);
   const today = useUiStore((s) => s.today);
   return useMemo(() => progressFor(sessions, isPro, proSince, today), [sessions, isPro, proSince, today]);
+};
+
+/** The creature a skill has raised (honours the dev preview level). */
+export const useEvolution = (skillKey: string): Evolution => {
+  const p = useProgress();
+  const preview = useUiStore((s) => s.devPreviewLevel);
+  return useMemo(() => evolutionFor(skillKey, skillLevelsOf(p.skills), { previewLevel: preview }), [p.skills, skillKey, preview]);
 };
 
 export const getProgress = (): Progress => {
@@ -105,7 +112,22 @@ export const recordSession = (input: NewSession, opts: { flip?: boolean } = {}):
         const skill = getSkill(event.skill);
         r.pushToast({ kind: 'skill', title: `${skill.label} reached LV ${reward.skillAfter.level}`, body: 'Skill level up', swatch: skill.swatch, icon: skill.icon });
       }
+      // A creature evolved: the reveal shows on top of any level-up modal.
+      const evoBefore = evolutionFor(event.skill, skillLevelsOf(before.skills));
+      const evoAfter = evolutionFor(event.skill, skillLevelsOf(after.skills));
       if (reward.leveledUp) r.showLevelUp(reward);
+      if (evoAfter.stage > evoBefore.stage) {
+        r.showEvolution({
+          id: event.id,
+          skillLabel: getSkill(event.skill).label,
+          family: evoAfter.family.key,
+          from: evoBefore.stage,
+          to: evoAfter.stage,
+          fromName: evoBefore.name,
+          toName: evoAfter.name,
+          quip: evoAfter.quip,
+        });
+      }
       if (useSettingsStore.getState().soundEnabled) {
         if (reward.leveledUp) playLevelUp();
         else if (reward.questsCompleted.length > 0 || reward.skillLeveledUp) playDing();

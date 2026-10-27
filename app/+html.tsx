@@ -16,6 +16,7 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#4F46E5" />
         <meta name="color-scheme" content="light dark" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
 
         {/* Pick light/dark before first paint (saved choice, else the OS setting). */}

@@ -364,8 +364,7 @@ export const LEGAL_NOTICE: LegalDoc = {
           list: [
             'Inter typeface by Rasmus Andersson — SIL Open Font License 1.1 (bundled via @expo-google-fonts/inter, MIT).',
             'Ionicons by Ionic — MIT License (via @expo/vector-icons).',
-            'Hourglass, rank emblems, skill crests and scenery illustrations — original artwork drawn in code for Flowglass.',
-            'Class character art — four illustrations from Pixabay (Pixabay Content License: free commercial use, no attribution required), cropped and recolored for Flowglass. Sources are listed in assets/images/classes/CREDITS.md.',
+            'Hourglass, rank emblems, skill crests, scenery, the evolving creatures and the Flowkeeper logo — original artwork drawn in code for Flowglass.',
             'Ambience and lo-fi tracks — recordings from Pixabay (Pixabay Content License), trimmed and looped for Flowglass. Sources are listed in public/audio/CREDITS.md.',
           ],
         },

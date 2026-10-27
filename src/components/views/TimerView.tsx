@@ -19,7 +19,7 @@ import { RankEmblem } from '../art/RankEmblem';
 import { SkillCrest } from '../art/SkillCrest';
 import { Controls } from '../Controls';
 import { RewardPanel } from '../feedback/RewardPanel';
-import { ClassCharacter } from '../art/ClassCharacter';
+import { EvolutionPanel } from '../art/EvolutionPanel';
 import { QuestRow } from '../game/QuestRow';
 import { SkewTag } from '../game/SkewTag';
 import { XpBar } from '../game/XpBar';
@@ -184,8 +184,8 @@ const QuestStrip: React.FC = () => {
 };
 
 /**
- * The active skill's class art, Persona-menu style: it fills the right side of the
- * screen, fades into the page, and carries the class name in big slanted type.
+ * The active skill's creature, Persona-menu style: it fills the right side of the
+ * screen, fades into the page, and carries the stage name in big slanted type.
  * On tighter screens it sinks back behind the timer without the name.
  */
 const CharacterBackdrop: React.FC<{ skill: Skill }> = ({ skill }) => {
@@ -200,7 +200,7 @@ const CharacterBackdrop: React.FC<{ skill: Skill }> = ({ skill }) => {
   // The name gets the space between the timer column (~460px, centered) and the right edge.
   return (
     <View style={{ position: 'absolute', right: 0, top: 0, bottom: 0, opacity: roomy ? 1 : 0.32, pointerEvents: 'none' }} aria-hidden>
-      <ClassCharacter skillKey={skill.key} width={w} height={h} fadeTo={t.colors.bg} showName={roomy} nameMaxWidth={main / 2 - 230 - w * 0.06} />
+      <EvolutionPanel skillKey={skill.key} width={w} height={h} fadeTo={t.colors.bg} showName={roomy} nameMaxWidth={main / 2 - 230 - w * 0.06} maxCreature={roomy ? main / 2 - 210 : undefined} />
     </View>
   );
 };
