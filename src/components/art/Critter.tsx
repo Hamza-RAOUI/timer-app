@@ -23,6 +23,7 @@ const BODY: Record<Exclude<Stage, 5>, { fill: string; shade: string; light: stri
   4: { fill: '#4D4660', shade: '#342F44', light: '#6E6686' },
 };
 const GOLD = '#F2C14E';
+const LAVA = '#FF8A3D';
 const INK = '#1B1730';
 
 /** Where things go on each body (viewBox 200×200, ground at y≈182). */
@@ -147,22 +148,49 @@ const Body: React.FC<{ stage: Exclude<Stage, 5>; c: { fill: string; shade: strin
         <Polygon points="100,86 104,66 106,86" fill="#B6FFF3" opacity={0.8} />
       </G>
     );
+  // Monolith: stacked rock plates, boulder fists, glowing lava-sand cracks.
+  const lava = (d: string, w = 3) => (
+    <G>
+      <Path d={d} stroke={LAVA} strokeWidth={w * 2.6} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity={0.22} />
+      <Path d={d} stroke={LAVA} strokeWidth={w} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <Path d={d} stroke="#FFE3A3" strokeWidth={w * 0.35} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+    </G>
+  );
   return (
     <G>
-      {/* shoulders + arms */}
-      <Circle cx={46} cy={92} r={20} fill={c.shade} />
-      <Circle cx={154} cy={92} r={20} fill={c.shade} />
-      <Rect x={30} y={98} width={26} height={54} rx={10} fill={c.fill} />
-      <Rect x={144} y={98} width={26} height={54} rx={10} fill={c.fill} />
-      <Rect x={70} y={164} width={24} height={18} rx={5} fill={c.shade} />
-      <Rect x={106} y={164} width={24} height={18} rx={5} fill={c.shade} />
-      <Path d="M58 70 C58 56 72 50 100 50 C128 50 142 56 142 70 L144 156 C144 166 136 170 126 170 L74 170 C64 170 56 166 56 156 Z" fill={c.fill} />
-      <Path d="M142 70 L144 156 C144 166 136 170 126 170 L112 170 C126 150 128 110 122 54 C134 56 142 60 142 70 Z" fill={c.shade} opacity={0.6} />
-      <Rect x={66} y={58} width={22} height={8} rx={4} fill={c.light} opacity={0.6} />
-      {/* glowing sand cracks */}
-      <Path d="M76 120 L88 134 L82 148 M124 116 L114 130 L122 146 M100 140 L100 160" stroke={GOLD} strokeWidth={3} fill="none" strokeLinecap="round" opacity={0.95} />
-      <Circle cx={100} cy={124} r={7} fill={GOLD} opacity={0.9} />
-      <Circle cx={100} cy={124} r={12} fill={GOLD} opacity={0.2} />
+      {/* rubble */}
+      <Polygon points="30,182 38,174 46,182" fill={c.shade} />
+      <Polygon points="152,182 160,172 170,182" fill={c.shade} />
+      {/* legs */}
+      <Polygon points="66,182 96,182 96,158 70,156" fill={c.shade} />
+      <Polygon points="134,182 104,182 104,158 130,156" fill={c.shade} />
+      <Polygon points="66,182 96,182 96,176 66,176" fill={c.fill} opacity={0.6} />
+      <Polygon points="134,182 104,182 104,176 134,176" fill={c.fill} opacity={0.6} />
+      {/* arms + boulder fists */}
+      <Polygon points="34,84 58,78 62,118 56,148 30,156 20,128" fill={c.fill} />
+      <Polygon points="20,128 30,156 56,148 52,132 30,124" fill={c.shade} />
+      <Polygon points="166,84 142,78 138,118 144,148 170,156 180,128" fill={c.fill} />
+      <Polygon points="180,128 170,156 144,148 148,132 170,124" fill={c.shade} />
+      {/* torso-head block */}
+      <Polygon points="56,64 78,46 122,46 146,64 150,118 140,166 60,166 50,118" fill={c.fill} />
+      <Polygon points="146,64 150,118 140,166 116,166 128,120 130,72" fill={c.shade} />
+      <Polygon points="60,64 80,50 100,52 96,66 70,72" fill={c.light} />
+      <Polygon points="104,52 120,48 140,62 128,70 102,66" fill={c.light} opacity={0.75} />
+      {/* shoulder boulders */}
+      <Polygon points="30,74 52,58 70,70 60,92 34,90" fill={c.fill} />
+      <Polygon points="30,74 52,58 60,66 40,80" fill={c.light} />
+      <Polygon points="170,74 148,58 130,70 140,92 166,90" fill={c.fill} />
+      <Polygon points="170,74 148,58 140,66 160,80" fill={c.light} opacity={0.75} />
+      {/* plate seams */}
+      <Path d="M54 118 L80 112 L98 120 L122 112 L148 118 M64 146 L90 140 L112 146 L138 140" stroke={c.shade} strokeWidth={2.5} fill="none" strokeLinejoin="round" />
+      {/* lava cracks + core */}
+      {lava('M70 124 L82 132 L76 146 L86 158')}
+      {lava('M130 122 L120 134 L128 150')}
+      {lava('M36 104 L46 112 L42 124', 2.4)}
+      {lava('M164 104 L154 112 L158 124', 2.4)}
+      <Circle cx={100} cy={132} r={14} fill={LAVA} opacity={0.2} />
+      <Polygon points="100,122 109,132 100,142 91,132" fill={LAVA} />
+      <Polygon points="100,126 105,132 100,138 95,132" fill="#FFE3A3" />
     </G>
   );
 };
@@ -357,66 +385,137 @@ const Front: React.FC<{ family: FamilyKey; stage: Exclude<Stage, 5>; a: (typeof 
 };
 
 // ───────────── Stage 5: the Flowkeeper (mascot) ─────────────
-const SAND = [
-  [34, 60, 2.5],
-  [52, 34, 1.8],
-  [160, 40, 2.2],
-  [174, 82, 1.6],
-  [28, 120, 1.8],
-  [150, 22, 1.4],
-  [70, 20, 1.6],
+/** 4-point sparkle centred on (x, y). */
+const sparkle = (x: number, y: number, r: number) => `M${x} ${y - r} Q${x} ${y} ${x + r} ${y} Q${x} ${y} ${x} ${y + r} Q${x} ${y} ${x - r} ${y} Q${x} ${y} ${x} ${y - r} Z`;
+
+const SPARKLES = [
+  [30, 52, 7, '#E9D5FF'],
+  [176, 40, 6, '#E9D5FF'],
+  [20, 120, 4, '#C4B5FD'],
+  [184, 112, 5, GOLD],
+  [62, 18, 4, GOLD],
+  [150, 16, 3.5, '#C4B5FD'],
+] as const;
+const GRAINS = [
+  [44, 84, 2],
+  [160, 70, 1.8],
+  [176, 150, 2],
+  [26, 160, 1.6],
+  [120, 12, 1.6],
 ] as const;
 
+/** The grain, grown up: a golden little body under a midnight hood, eyes glowing, hourglass in hand. */
 const Flowkeeper: React.FC<{ uid: string; closed: boolean; silhouette: boolean }> = ({ uid, closed, silhouette }) => {
-  const hood = silhouette ? '#2A2540' : `url(#hood${uid})`;
+  const dark = '#2A2540';
+  const hood = silhouette ? dark : `url(#hood${uid})`;
+  const body = silhouette ? dark : `url(#fkBody${uid})`;
+  const gold = silhouette ? dark : GOLD;
   return (
     <G>
+      <Defs>
+        <LinearGradient id={`fkBody${uid}`} x1="0" y1="0" x2="1" y2="1">
+          <Stop offset="0" stopColor="#FFD27A" />
+          <Stop offset="1" stopColor="#D9932F" />
+        </LinearGradient>
+        <LinearGradient id={`fkSwirl${uid}`} x1="0" y1="0" x2="1" y2="0">
+          <Stop offset="0" stopColor="#A78BFA" stopOpacity={0} />
+          <Stop offset="0.5" stopColor="#A78BFA" stopOpacity={0.9} />
+          <Stop offset="1" stopColor="#6C7BFF" stopOpacity={0.1} />
+        </LinearGradient>
+        <RadialGradient id={`fkSand${uid}`} cx="50%" cy="50%" r="50%">
+          <Stop offset="0" stopColor="#FFC56B" stopOpacity={0.7} />
+          <Stop offset="1" stopColor="#FFC56B" stopOpacity={0} />
+        </RadialGradient>
+      </Defs>
+
+      {/* magic trails */}
+      {!silhouette && (
+        <G fill="none" strokeLinecap="round">
+          <Path d="M24 158 C4 116 30 62 76 64" stroke={`url(#fkSwirl${uid})`} strokeWidth={7} />
+          <Path d="M178 168 C200 126 178 86 146 88" stroke={`url(#fkSwirl${uid})`} strokeWidth={5} />
+          <Path d="M36 180 C72 160 122 196 170 174" stroke={`url(#fkSwirl${uid})`} strokeWidth={4} opacity={0.8} />
+          <Path d="M54 40 C70 20 96 14 118 20" stroke="#C4B5FD" strokeWidth={2} opacity={0.5} />
+        </G>
+      )}
+
       {/* cape */}
-      <Path d="M58 110 C40 140 36 170 46 184 L154 184 C164 170 160 140 142 110 Z" fill={silhouette ? '#2A2540' : '#1E2352'} />
-      <Path d="M58 110 C46 140 44 168 50 184 L70 184 C62 160 64 130 76 112 Z" fill={silhouette ? '#2A2540' : '#2B3270'} opacity={0.8} />
-      {/* hood with two swept points */}
-      <Path d="M100 30 C126 30 146 52 150 84 C152 104 146 120 132 128 L68 128 C54 120 48 104 50 84 C54 52 74 30 100 30 Z" fill={hood} />
-      <Path d="M58 60 L30 34 L62 50 Z" fill={hood} />
-      <Path d="M142 60 L172 30 L138 50 Z" fill={hood} />
+      <Path d="M64 108 C32 128 26 168 40 186 L160 186 C176 168 170 128 136 108 Z" fill={silhouette ? dark : '#1E1B4B'} />
+      {!silhouette && <Path d="M64 108 C32 128 26 168 40 186" stroke="#7C6CF0" strokeWidth={3} fill="none" opacity={0.7} />}
+      {!silhouette && <Path d="M40 186 C34 176 22 178 16 186 Z" fill="#1E1B4B" />}
+
+      {/* golden body + feet */}
+      <Ellipse cx={86} cy={180} rx={11} ry={6} fill={silhouette ? dark : '#C9852A'} />
+      <Ellipse cx={114} cy={180} rx={11} ry={6} fill={silhouette ? dark : '#C9852A'} />
+      <Path d="M76 116 C68 140 70 166 84 178 L116 178 C130 166 132 140 124 116 Z" fill={body} />
+      {!silhouette && <Ellipse cx={88} cy={150} rx={7} ry={12} fill="#FFE6A8" opacity={0.6} />}
+      {/* scarf + collar gem */}
+      <Path d="M70 118 C84 128 116 128 130 118 L126 132 C112 140 88 140 74 132 Z" fill={silhouette ? dark : '#3B2F8F'} />
+      <Polygon points="100,124 108,134 100,144 92,134" fill={gold} />
+      {!silhouette && <Polygon points="100,128 104,134 100,140 96,134" fill="#FFF3C4" />}
+      {/* arm reaching to the hourglass */}
+      <Path d="M122 130 C132 128 140 128 146 132" stroke={silhouette ? dark : '#D9932F'} strokeWidth={9} strokeLinecap="round" fill="none" />
+
+      {/* hood with swept golden points */}
+      <Path d="M58 60 C40 48 28 30 22 10 C40 26 58 38 74 46 Z" fill={gold} />
+      <Path d="M142 60 C160 48 172 30 178 10 C160 26 142 38 126 46 Z" fill={gold} />
+      {!silhouette && <Path d="M58 60 C46 50 36 36 30 22 C44 34 58 42 70 48 Z" fill="#B8862A" />}
+      {!silhouette && <Path d="M142 60 C154 50 164 36 170 22 C156 34 142 42 130 48 Z" fill="#B8862A" />}
+      <Path d="M100 22 C134 22 156 46 158 78 C160 100 150 114 132 120 L68 120 C50 114 40 100 42 78 C44 46 66 22 100 22 Z" fill={hood} />
       {!silhouette && (
         <>
-          <Path d="M100 30 C126 30 146 52 150 84 C152 104 146 120 132 128 L68 128 C54 120 48 104 50 84 C54 52 74 30 100 30 Z" fill="none" stroke={GOLD} strokeWidth={3} />
-          {/* shadowed face + glowing eyes */}
-          <Ellipse cx={100} cy={92} rx={34} ry={26} fill="#0B0F2A" />
+          <Path d="M100 22 C134 22 156 46 158 78 C160 100 150 114 132 120 L68 120 C50 114 40 100 42 78 C44 46 66 22 100 22 Z" fill="none" stroke={GOLD} strokeWidth={3} />
+          <Path d="M64 40 C76 30 88 26 100 26" stroke="#5A64D8" strokeWidth={4} strokeLinecap="round" fill="none" opacity={0.7} />
+          {/* face in shadow + glowing eyes */}
+          <Ellipse cx={100} cy={88} rx={34} ry={25} fill="#0B0F2A" />
           {closed ? (
             <G stroke="#FFE08A" strokeWidth={3} strokeLinecap="round">
-              <Path d="M80 92 L92 92" />
-              <Path d="M108 92 L120 92" />
+              <Path d="M78 90 L92 92" />
+              <Path d="M108 92 L122 90" />
             </G>
           ) : (
             <G>
-              <Path d="M78 88 L94 92 L80 98 Z" fill="#FFE08A" />
-              <Path d="M122 88 L106 92 L120 98 Z" fill="#FFE08A" />
-              <Circle cx={86} cy={93} r={8} fill="#FFE08A" opacity={0.25} />
-              <Circle cx={114} cy={93} r={8} fill="#FFE08A" opacity={0.25} />
+              <Circle cx={85} cy={91} r={11} fill="#FFE08A" opacity={0.22} />
+              <Circle cx={115} cy={91} r={11} fill="#FFE08A" opacity={0.22} />
+              <Path d="M74 84 L95 91 L78 99 Z" fill="#FFE08A" />
+              <Path d="M126 84 L105 91 L122 99 Z" fill="#FFE08A" />
+              <Circle cx={84} cy={91} r={2} fill="#FFFFFF" />
+              <Circle cx={116} cy={91} r={2} fill="#FFFFFF" />
             </G>
           )}
           {/* gem */}
-          <Polygon points="100,38 110,52 100,66 90,52" fill={GOLD} />
-          <Polygon points="100,44 105,52 100,60 95,52" fill="#FFF3C4" />
-          {/* collar gem */}
-          <Polygon points="100,124 108,134 100,144 92,134" fill={GOLD} />
-          {/* hourglass held at the side */}
-          <G transform="translate(150 132) rotate(-8)">
-            <Rect x={-20} y={-34} width={40} height={6} rx={3} fill={GOLD} />
-            <Rect x={-20} y={28} width={40} height={6} rx={3} fill={GOLD} />
-            <Rect x={-17} y={-28} width={3} height={56} fill="#C9962E" />
-            <Rect x={14} y={-28} width={3} height={56} fill="#C9962E" />
-            <Path d="M-12 -28 L12 -28 C12 -12 4 -4 2 0 C4 4 12 12 12 28 L-12 28 C-12 12 -4 4 -2 0 C-4 -4 -12 -12 -12 -28 Z" fill="#D9E6FF" opacity={0.55} />
-            <Path d="M-8 -20 L8 -20 C6 -10 2 -4 0 -2 C-2 -4 -6 -10 -8 -20 Z" fill="#FFB547" />
-            <Path d="M-10 26 L10 26 C8 18 4 14 0 13 C-4 14 -8 18 -10 26 Z" fill="#FFB547" />
-            <Rect x={-0.8} y={-2} width={1.6} height={15} fill="#FFB547" />
-          </G>
-          {/* hand */}
-          <Circle cx={134} cy={136} r={8} fill="#E6B98A" />
-          {/* floating sand */}
-          {SAND.map(([x, y, r], i) => (
-            <Circle key={i} cx={x} cy={y} r={r} fill={GOLD} opacity={0.85} />
+          <Circle cx={100} cy={46} r={14} fill={GOLD} opacity={0.18} />
+          <Polygon points="100,32 111,46 100,60 89,46" fill={GOLD} />
+          <Polygon points="100,38 105.5,46 100,54 94.5,46" fill="#FFF3C4" />
+        </>
+      )}
+
+      {/* ornate hourglass */}
+      <G transform="translate(156 132) rotate(-10)">
+        {!silhouette && <Circle cx={0} cy={0} r={38} fill={`url(#fkSand${uid})`} />}
+        <Rect x={-23} y={-38} width={46} height={8} rx={4} fill={gold} />
+        <Rect x={-23} y={30} width={46} height={8} rx={4} fill={gold} />
+        <Rect x={-19} y={-31} width={4} height={62} rx={2} fill={silhouette ? dark : '#B8862A'} />
+        <Rect x={15} y={-31} width={4} height={62} rx={2} fill={silhouette ? dark : '#B8862A'} />
+        {!silhouette && (
+          <>
+            <Path d="M-13 -30 L13 -30 C13 -13 5 -4 2 0 C5 4 13 13 13 30 L-13 30 C-13 13 -5 4 -2 0 C-5 -4 -13 -13 -13 -30 Z" fill="#DCE6FF" opacity={0.45} />
+            <Path d="M-9 -22 L9 -22 C7 -11 2 -4 0 -2 C-2 -4 -7 -11 -9 -22 Z" fill="#FFB547" />
+            <Path d="M-11 28 L11 28 C9 19 4 14 0 13 C-4 14 -9 19 -11 28 Z" fill="#FFB547" />
+            <Rect x={-0.9} y={-2} width={1.8} height={16} fill="#FFD27A" />
+            <Path d="M-10 -26 C-10 -16 -6 -8 -3 -4" stroke="#FFFFFF" strokeWidth={1.6} opacity={0.6} fill="none" />
+          </>
+        )}
+      </G>
+      {/* hand */}
+      <Circle cx={146} cy={133} r={8} fill={silhouette ? dark : '#E8A945'} />
+
+      {!silhouette && (
+        <>
+          {SPARKLES.map(([x, y, r, col], i) => (
+            <Path key={i} d={sparkle(x, y, r)} fill={col} opacity={0.9} />
+          ))}
+          {GRAINS.map(([x, y, r], i) => (
+            <Circle key={`g${i}`} cx={x} cy={y} r={r} fill={GOLD} opacity={0.85} />
           ))}
         </>
       )}

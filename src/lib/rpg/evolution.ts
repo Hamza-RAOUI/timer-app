@@ -3,7 +3,8 @@ import { RPG_CONFIG, type RpgConfig } from './config';
 /**
  * Creature evolution. Every skill raises a creature from one of four families
  * (Study → Scholar, Work → Builder, Hobby → Creator, Personal → Wanderer) through
- * five stages: Grain → Pebble → Rock → Monolith → Flowkeeper. Stages follow the
+ * five stages (Grain → Pebble → Rock → Monolith → Flowkeeper), each with one funny
+ * name ("Unemployed Grain" … "The Flow Demon"). Stages follow the
  * skill's level; the fifth — the Flowkeeper, Flowglass's mascot — also needs all
  * four families trained, so the legendary form rewards a balanced life.
  * Pure: derived from skill levels, nothing stored.
@@ -15,56 +16,26 @@ export interface FamilyDef {
   key: FamilyKey;
   /** Built-in skill this family belongs to. */
   skill: string;
+  /** Internal family name (a11y, docs) — not shown as a label. */
   line: string;
-  /** Stage names, stage 1…5. */
+  /** The one name shown for each stage, 1…5. */
   names: [string, string, string, string, string];
-  /** Funny title shown at the Monolith stage. */
-  epithet: string;
 }
 
+/** Stages 1–3 and 5 share a name across families; stage 4 is each family's own. */
+const shared = (four: string): FamilyDef['names'] => ['Unemployed Grain', 'The Paperweight', 'Mike the Rock', four, 'The Flow Demon'];
+
 export const FAMILIES: Record<FamilyKey, FamilyDef> = {
-  scholar: {
-    key: 'scholar',
-    skill: 'study',
-    line: 'Scholar',
-    names: ['Grain Scholar', 'Pebble Apprentice', 'Rune Rock', 'Archive Monolith', 'The Flowkeeper'],
-    epithet: 'The Academic Weapon',
-  },
-  builder: {
-    key: 'builder',
-    skill: 'work',
-    line: 'Builder',
-    names: ['Pebble Builder', 'Hard-Hat Pebble', 'Foreman Rock', 'Iron Monolith', 'The Flowkeeper'],
-    epithet: 'Corporate Survivor',
-  },
-  creator: {
-    key: 'creator',
-    skill: 'hobby',
-    line: 'Creator',
-    names: ['Little Creator', 'Painter Pebble', 'Rockstar', 'Studio Monolith', 'The Flowkeeper'],
-    epithet: 'Unlicensed Genius',
-  },
-  wanderer: {
-    key: 'wanderer',
-    skill: 'personal',
-    line: 'Wanderer',
-    names: ['Sand Wanderer', 'Pathfinder Pebble', 'Lantern Rock', 'Guardian Monolith', 'The Flowkeeper'],
-    epithet: 'The Side Quest Enjoyer',
-  },
+  scholar: { key: 'scholar', skill: 'study', line: 'Scholar', names: shared('The Academic Weapon') },
+  builder: { key: 'builder', skill: 'work', line: 'Builder', names: shared('Corporate Survivor') },
+  creator: { key: 'creator', skill: 'hobby', line: 'Creator', names: shared('Unlicensed Genius') },
+  wanderer: { key: 'wanderer', skill: 'personal', line: 'Wanderer', names: shared('The Side Quest Enjoyer') },
 };
 
 export const FAMILY_KEYS = Object.keys(FAMILIES) as FamilyKey[];
 
-/** Species per stage (shared by every family). */
+/** Species per stage (shared by every family; used for art and a11y, not as a label). */
 export const SPECIES: Record<Stage, string> = { 1: 'Grain', 2: 'Pebble', 3: 'Rock', 4: 'Monolith', 5: 'Flowkeeper' };
-
-/** Funny titles per stage; stage 4 uses the family's epithet. */
-const QUIPS: Record<Exclude<Stage, 4>, string> = {
-  1: 'Unemployed Grain',
-  2: 'The Paperweight',
-  3: 'Mike the Rock',
-  5: 'The Flow Demon',
-};
 
 /** Easter egg: tap a Rock-stage creature a few times. Original lines only. */
 export const ROCK_JOKES = [
@@ -122,10 +93,12 @@ export const stageForLevel = (level: number, flowkeeperUnlocked: boolean, cfg: R
 
 export interface Evolution {
   family: FamilyDef;
+  /** Form on display — the player may pick any stage they've reached. */
   stage: Stage;
+  /** Highest stage reached. */
+  reached: Stage;
   species: string;
   name: string;
-  quip: string;
   skillLevel: number;
   /** Next stage, or null at the Flowkeeper. `needsAllFamilies` → the level is reached but other families lag. */
   next: { stage: Stage; name: string; level: number; needsAllFamilies: boolean } | null;
@@ -133,12 +106,13 @@ export interface Evolution {
 }
 
 export const stageName = (family: FamilyKey, stage: Stage) => FAMILIES[family].names[stage - 1];
-export const stageQuip = (family: FamilyKey, stage: Stage) => (stage === 4 ? FAMILIES[family].epithet : QUIPS[stage]);
 
 export interface EvolutionOptions {
   cfg?: RpgConfig;
   /** Dev preview: pretend the skill is at this level and every family is trained. */
   previewLevel?: number | null;
+  /** Form the player picked (ignored if not reached yet). */
+  chosenStage?: number | null;
 }
 
 /** The creature a skill has raised so far. */
@@ -150,15 +124,17 @@ export const evolutionFor = (skillKey: string, skillLevels: Record<string, numbe
   const skillLevel = preview ?? skillLevels[skillKey] ?? 1;
   const real = flowkeeperStatus(skillLevels, cfg);
   const flowkeeper: FlowkeeperStatus = preview != null ? { unlocked: preview >= cfg.evolution.flowkeeperFamilyLevel, missing: [], required: real.required } : real;
-  const stage = stageForLevel(skillLevel, flowkeeper.unlocked, cfg);
+  const reached = stageForLevel(skillLevel, flowkeeper.unlocked, cfg);
+  const chosen = opts.chosenStage;
+  const stage = chosen != null && chosen >= 1 && chosen <= reached ? (Math.round(chosen) as Stage) : reached;
 
   let next: Evolution['next'] = null;
-  if (stage < 5) {
-    const ns = (stage + 1) as Stage;
+  if (reached < 5) {
+    const ns = (reached + 1) as Stage;
     const level = cfg.evolution.stageLevels[ns - 1];
     next = { stage: ns, name: stageName(familyKey, ns), level, needsAllFamilies: ns === 5 && skillLevel >= level };
   }
-  return { family, stage, species: SPECIES[stage], name: stageName(familyKey, stage), quip: stageQuip(familyKey, stage), skillLevel, next, flowkeeper };
+  return { family, stage, reached, species: SPECIES[stage], name: stageName(familyKey, stage), skillLevel, next, flowkeeper };
 };
 
 /** Skill key → level, from computeProgress().skills. */

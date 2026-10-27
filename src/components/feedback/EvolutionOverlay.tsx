@@ -72,7 +72,6 @@ const EvolutionContent: React.FC = () => {
           {evo.skillLabel} · {evo.fromName} evolved into
         </Text>
         <Text style={styles.name}>{evo.toName}</Text>
-        <Text style={styles.quip}>“{evo.quip}”</Text>
 
         <View style={styles.actions}>
           <Pressable ref={btnRef} onPress={dismiss} style={({ pressed }) => [styles.primary, pressed && { opacity: 0.85 }]} accessibilityRole="button">
@@ -124,7 +123,6 @@ const useStyles = makeStyles((t) => ({
     transform: [{ skewX: SLANT }],
     ...hardTextShadow(t.colors.highlight, 3),
   },
-  quip: { fontFamily: fonts.medium, fontSize: 14, color: t.colors.text.secondary, marginTop: 6, fontStyle: 'italic' },
   actions: { width: '100%', gap: 10, marginTop: 22 },
   primary: { height: 52, borderRadius: 12, backgroundColor: t.colors.accent, alignItems: 'center', justifyContent: 'center', transform: [{ skewX: SLANT }] },
   primaryText: { fontFamily: fonts.display, fontSize: 16, color: t.colors.text.onAccent, letterSpacing: 1.6, textTransform: 'uppercase', transform: [{ skewX: UNSLANT }] },

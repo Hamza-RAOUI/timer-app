@@ -18,7 +18,6 @@ export {
   SPECIES,
   stageForLevel,
   stageName,
-  stageQuip,
   type Evolution,
   type FamilyDef,
   type FamilyKey,

@@ -44,7 +44,8 @@ export const useProgress = (): Progress => {
 export const useEvolution = (skillKey: string): Evolution => {
   const p = useProgress();
   const preview = useUiStore((s) => s.devPreviewLevel);
-  return useMemo(() => evolutionFor(skillKey, skillLevelsOf(p.skills), { previewLevel: preview }), [p.skills, skillKey, preview]);
+  const chosen = useSettingsStore((s) => s.creatureForms[skillKey]);
+  return useMemo(() => evolutionFor(skillKey, skillLevelsOf(p.skills), { previewLevel: preview, chosenStage: chosen }), [p.skills, skillKey, preview, chosen]);
 };
 
 export const getProgress = (): Progress => {
@@ -116,16 +117,16 @@ export const recordSession = (input: NewSession, opts: { flip?: boolean } = {}):
       const evoBefore = evolutionFor(event.skill, skillLevelsOf(before.skills));
       const evoAfter = evolutionFor(event.skill, skillLevelsOf(after.skills));
       if (reward.leveledUp) r.showLevelUp(reward);
-      if (evoAfter.stage > evoBefore.stage) {
+      if (evoAfter.reached > evoBefore.reached) {
+        useSettingsStore.getState().setCreatureForm(event.skill, null); // show off the new form
         r.showEvolution({
           id: event.id,
           skillLabel: getSkill(event.skill).label,
           family: evoAfter.family.key,
-          from: evoBefore.stage,
-          to: evoAfter.stage,
+          from: evoBefore.reached,
+          to: evoAfter.reached,
           fromName: evoBefore.name,
           toName: evoAfter.name,
-          quip: evoAfter.quip,
         });
       }
       if (useSettingsStore.getState().soundEnabled) {

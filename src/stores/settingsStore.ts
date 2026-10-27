@@ -46,6 +46,8 @@ interface Persisted {
   analyticsConsent: AnalyticsConsent;
   /** Focus soundscape played while a session runs (web). */
   ambience: AmbienceKey;
+  /** Creature form picked per skill (skill key → stage 1–5); unset = latest form. */
+  creatureForms: Record<string, number>;
 }
 
 interface SettingsState extends Persisted {
@@ -71,6 +73,8 @@ interface SettingsState extends Persisted {
   archiveCustomSkill: (key: string) => void;
   setAnalyticsConsent: (c: AnalyticsConsent) => void;
   setAmbience: (a: AmbienceKey) => void;
+  /** Pick a creature form for a skill; null goes back to the latest form. */
+  setCreatureForm: (skill: string, stage: number | null) => void;
   /** Apply settings from the cloud copy (only the synced keys). */
   applySynced: (p: Record<string, unknown>) => void;
   /** Back to defaults (used by "Delete all my data"). */
@@ -96,6 +100,7 @@ const DEFAULTS: Persisted = {
   customSkills: [],
   analyticsConsent: 'unset',
   ambience: 'off',
+  creatureForms: {},
 };
 
 const PERSISTED_KEYS = Object.keys(DEFAULTS) as (keyof Persisted)[];
@@ -221,6 +226,12 @@ export const useSettingsStore = create<SettingsState>((set, get) => {
 
     setAnalyticsConsent: (analyticsConsent) => patch({ analyticsConsent }),
     setAmbience: (ambience) => patch({ ambience }),
+    setCreatureForm: (skill, stage) => {
+      const creatureForms = { ...get().creatureForms };
+      if (stage == null) delete creatureForms[skill];
+      else creatureForms[skill] = stage;
+      patch({ creatureForms });
+    },
 
     applySynced: (p) => {
       const clean: Partial<Persisted> = {};
