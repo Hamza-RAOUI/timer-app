@@ -15,6 +15,7 @@ import { RankEmblem } from './art/RankEmblem';
 import { SkillCrest } from './art/SkillCrest';
 import { Dropdown } from './Dropdown';
 import { XpBar } from './game/XpBar';
+import { FlowglassMark } from './art/FlowglassMark';
 
 const NAV: { key: AppView; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
   { key: 'timer', label: 'Timer', icon: 'hourglass-outline' },
@@ -155,11 +156,7 @@ export const Sidebar: React.FC<{ onCollapse?: () => void }> = ({ onCollapse }) =
     <View style={styles.root}>
       <View style={styles.brandRow}>
         <Pressable onPress={() => setView('timer')} style={styles.brandPress} accessibilityRole="link" accessibilityLabel="Flowglass — go to timer">
-          <View style={styles.logo}>
-            <View style={styles.logoInner}>
-              <Ionicons name="hourglass" size={17} color={t.colors.text.onAccent} />
-            </View>
-          </View>
+          <FlowglassMark size={34} />
           <Text style={styles.brand}>Flowglass</Text>
         </Pressable>
         {onCollapse && (

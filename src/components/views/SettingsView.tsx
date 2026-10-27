@@ -7,12 +7,14 @@ import { initAnalytics } from '../../lib/analytics';
 import { deleteAccount, sendCode, signOut, syncNow, verifyCode } from '../../lib/cloud';
 import { deleteAllData, exportData } from '../../lib/privacy';
 import { cloudConfigured } from '../../lib/supabase';
+import { RPG_CONFIG } from '../../lib/rpg';
 import { useAccountStore } from '../../stores/accountStore';
 import { useSettingsStore, type ThemeMode } from '../../stores/settingsStore';
 import { useStatsStore } from '../../stores/statsStore';
 import { useUiStore } from '../../stores/uiStore';
 import { makeStyles, useTheme } from '../../theme/ThemeProvider';
 import { fonts, SLANT, tabular, UNSLANT } from '../../theme/typography';
+import { FlowglassMark } from '../art/FlowglassMark';
 import { Card } from '../Card';
 import { SectionHeader } from '../game/SectionHeader';
 
@@ -270,20 +272,17 @@ export const SettingsView: React.FC = () => {
             <SectionHeader title="Developer" style={styles.section} />
             <Card padding={0}>
               <Row icon="flask-outline" label="Pro (local test)" desc="Dev builds only — flips the local Pro flag" value={settings.isPro} onChange={() => settings.setPro(!settings.isPro)} />
-              <Row icon="speedometer-outline" label="Fast timers ×60" desc="1 real second = 1 timer minute (dev only)" value={devSpeed > 1} onChange={() => setDevSpeed(devSpeed > 1 ? 1 : 60)} last />
+              <Row icon="speedometer-outline" label="Fast timers ×60" desc="1 real second = 1 timer minute (dev only)" value={devSpeed > 1} onChange={() => setDevSpeed(devSpeed > 1 ? 1 : 60)} />
+              <PreviewLevelRow />
             </Card>
           </>
         )}
 
         <View style={styles.about}>
-          <View style={styles.logo}>
-            <View style={styles.unslant}>
-              <Ionicons name="hourglass" size={18} color={t.colors.text.onAccent} />
-            </View>
-          </View>
+          <FlowglassMark size={56} label="Flowglass logo: the Flowkeeper" />
           <Text style={styles.aboutName}>Flowglass</Text>
           <Text style={styles.aboutVer}>v{APP_VERSION} · flow + hourglass</Text>
-          <Text style={styles.aboutCredits}>Inter typeface (SIL Open Font License 1.1) · Ionicons (MIT) · class art from Pixabay (Pixabay Content License) · all other illustrations are original</Text>
+          <Text style={styles.aboutCredits}>Inter typeface (SIL Open Font License 1.1) · Ionicons (MIT) · all illustrations, creatures and the Flowkeeper logo are original</Text>
         </View>
       </ScrollView>
     </View>
@@ -462,6 +461,46 @@ const AccountCard: React.FC = () => {
       )}
       <Text style={[styles.rowDesc, { marginTop: 12 }]}>By signing in you agree to the Terms and Privacy policy. Your email is used only to sign you in.</Text>
     </Card>
+  );
+};
+
+/** Dev only: preview every creature stage without logging fake sessions (not saved, not synced). */
+const PreviewLevelRow: React.FC = () => {
+  const t = useTheme();
+  const styles = useStyles();
+  const level = useUiStore((s) => s.devPreviewLevel);
+  const setLevel = useUiStore((s) => s.setDevPreviewLevel);
+  const jumps = RPG_CONFIG.evolution.stageLevels;
+  return (
+    <View style={[styles.row, { flexWrap: 'wrap' }]}>
+      <View style={styles.rowIcon}>
+        <Ionicons name="sparkles-outline" size={18} color={t.colors.accentText} />
+      </View>
+      <View style={{ flex: 1, minWidth: 160 }}>
+        <Text style={styles.rowLabel}>Preview level {level != null ? `· LV ${level}` : '· off'}</Text>
+        <Text style={styles.rowDesc}>Shows creatures as if every skill were at this level. Your real XP is untouched.</Text>
+      </View>
+      <View style={styles.stepper}>
+        <Pressable onPress={() => setLevel((level ?? 1) - 1)} style={styles.stepBtn} accessibilityRole="button" accessibilityLabel="Preview one level lower">
+          <Ionicons name="remove" size={18} color={t.colors.text.primary} />
+        </Pressable>
+        <Pressable onPress={() => setLevel((level ?? 0) + 1)} style={styles.stepBtn} accessibilityRole="button" accessibilityLabel="Preview one level higher">
+          <Ionicons name="add" size={18} color={t.colors.text.primary} />
+        </Pressable>
+      </View>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, width: '100%', marginTop: 10 }}>
+        {jumps.map((lv, i) => (
+          <Pressable key={lv} onPress={() => setLevel(lv)} style={[styles.smallBtn, level === lv && { backgroundColor: t.colors.accentSoft }]} accessibilityRole="button">
+            <Text style={styles.smallBtnText}>
+              Stage {i + 1} · LV {lv}
+            </Text>
+          </Pressable>
+        ))}
+        <Pressable onPress={() => setLevel(null)} style={styles.smallBtn} accessibilityRole="button">
+          <Text style={styles.smallBtnText}>Real progress</Text>
+        </Pressable>
+      </View>
+    </View>
   );
 };
 

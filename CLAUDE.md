@@ -68,8 +68,9 @@ Dev-only testing aid: `http://localhost:8081/?devspeed=60` runs timers 60× fast
   Inter Black for game headings; `SLANT`/`UNSLANT` + `hardTextShadow` for the look.
 - **Game UI** (`src/components/game/`, `art/`, `feedback/`): SkewTag, XpBar,
   SectionHeader, QuestRow, GhostWord, StripeField; original SVG art (RankEmblem,
-  SkillCrest, SandScene); `ClassCharacter` — one class per skill, a slanted art panel
-  (slide-in, idle drift, web mouse parallax) behind the timer and in the Character hero;
+  SkillCrest, SandScene); `Critter` — the evolving creature (4 families × 5 stages,
+  Grain → Pebble → Rock → Monolith → Flowkeeper), shown by `EvolutionPanel` behind the
+  timer and in the Character hero; `FlowglassMark` — the logo (keep `public/favicon.svg` in sync);
   RewardPanel, LevelUpOverlay, ToastStack, ProSheet,
   ConsentBanner.
 - **Analytics** (`src/lib/analytics.ts`): Vercel Web Analytics, web only, cookieless.
@@ -124,9 +125,11 @@ Dev-only testing aid: `http://localhost:8081/?devspeed=60` runs timers 60× fast
   don't add it again. `useAnimatedStyle`/`useSharedValue` callbacks are auto-worklets.
 - **react-native-purchases is not installed**; see the go-live steps in
   `src/lib/purchases.ts`. Vercel custom events need a Vercel plan that supports them.
-- **Class art** lives in `assets/images/classes/` — Pixabay Content License images,
-  recolored with ffmpeg; sources in `CREDITS.md`. Never add characters from existing
-  anime/games (stock sites are full of fan art) — the app sells Pro, so it's a takedown risk.
+- **Creatures are original vector art** (`src/components/art/Critter.tsx`); evolution rules
+  live in `src/lib/rpg/evolution.ts` (thresholds in `config.ts`). Never add characters,
+  faces or catchphrases from existing anime/games/celebrities — the app sells Pro, so it's
+  a takedown risk (the Rock easter egg uses original jokes only). Painted-art prompts:
+  `docs/art-prompts.md`. Dev: Settings → Developer → Preview level shows any stage.
 - **Sound** (`src/lib/sound.ts`), web only; native no-ops. Cues are synthesized tones;
   ambience plays `public/audio/<key>.mp3` (Pixabay, sources in `public/audio/CREDITS.md`,
   built by `node scripts/prepare-audio.mjs <downloads>`). Missing files are simply not

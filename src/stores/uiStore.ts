@@ -20,6 +20,8 @@ interface UiState {
   today: string;
   /** Dev-only time multiplier for testing timers (1 in production). */
   devSpeed: number;
+  /** Dev-only: show creatures as if every skill were at this level (null = real progress). Never persisted. */
+  devPreviewLevel: number | null;
 
   setView: (v: AppView) => void;
   openDrawer: () => void;
@@ -32,6 +34,7 @@ interface UiState {
   closePro: () => void;
   refreshToday: () => void;
   setDevSpeed: (n: number) => void;
+  setDevPreviewLevel: (n: number | null) => void;
 }
 
 export const useUiStore = create<UiState>((set, get) => ({
@@ -42,6 +45,7 @@ export const useUiStore = create<UiState>((set, get) => ({
   proSheet: null,
   today: dayKey(Date.now()),
   devSpeed: 1,
+  devPreviewLevel: null,
 
   setView: (view) => set({ view, drawerOpen: false }),
   openDrawer: () => set({ drawerOpen: true }),
@@ -61,4 +65,5 @@ export const useUiStore = create<UiState>((set, get) => ({
     if (today !== get().today) set({ today });
   },
   setDevSpeed: (devSpeed) => set({ devSpeed: __DEV__ ? Math.max(1, devSpeed) : 1 }),
+  setDevPreviewLevel: (n) => set({ devPreviewLevel: __DEV__ && n != null ? Math.max(1, Math.min(40, Math.round(n))) : null }),
 }));

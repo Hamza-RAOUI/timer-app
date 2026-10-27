@@ -10,6 +10,7 @@ import { useSettingsStore } from '../stores/settingsStore';
 import { makeStyles, useTheme } from '../theme/ThemeProvider';
 import { fonts } from '../theme/typography';
 import { ConsentBanner } from './feedback/ConsentBanner';
+import { EvolutionOverlay } from './feedback/EvolutionOverlay';
 import { LevelUpOverlay } from './feedback/LevelUpOverlay';
 import { ProSheet } from './feedback/ProSheet';
 import { ToastStack } from './feedback/ToastStack';
@@ -39,11 +40,12 @@ const useKeyboardShortcuts = () => {
       const rewards = useRewardStore.getState();
 
       if (e.key === 'Escape') {
-        if (rewards.levelUp) rewards.dismissLevelUp();
+        if (rewards.evolution) rewards.dismissEvolution();
+        else if (rewards.levelUp) rewards.dismissLevelUp();
         else if (ui.drawerOpen) ui.closeDrawer();
         return;
       }
-      if (rewards.levelUp || ui.proSheet) return; // a dialog owns the keyboard
+      if (rewards.levelUp || rewards.evolution || ui.proSheet) return; // a dialog owns the keyboard
       if (e.key >= '1' && e.key <= String(APP_VIEWS.length)) {
         ui.setView(APP_VIEWS[Number(e.key) - 1]);
         return;
@@ -93,6 +95,7 @@ export const AppShell: React.FC = () => {
   const Overlays = (
     <>
       <LevelUpOverlay />
+      <EvolutionOverlay />
       <ToastStack />
       <ConsentBanner />
       <ProSheet />

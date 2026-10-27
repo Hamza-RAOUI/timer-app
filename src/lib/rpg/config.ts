@@ -66,6 +66,12 @@ export interface RpgConfig {
   weekStartsOn: number;
   /** Free tier keeps this many days of statistics history visible. */
   freeStatsDays: number;
+  evolution: {
+    /** Skill level at which each of the 5 creature stages starts (stage 1 = index 0). */
+    stageLevels: [number, number, number, number, number];
+    /** Stage 5 (the Flowkeeper) also needs every family's best skill at this level. */
+    flowkeeperFamilyLevel: number;
+  };
 }
 
 export const RPG_CONFIG: RpgConfig = {
@@ -110,4 +116,9 @@ export const RPG_CONFIG: RpgConfig = {
   },
   weekStartsOn: 1,
   freeStatsDays: 7,
+  evolution: {
+    // Skill XP to reach them ≈ 0 / 240 / 900 / 2340 / 5040 (a Pomodoro ≈ 35 XP).
+    stageLevels: [1, 3, 6, 10, 15],
+    flowkeeperFamilyLevel: 10,
+  },
 };

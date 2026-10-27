@@ -6,3 +6,22 @@ export { computeStreak, type StreakInfo, type StreakOptions } from './streak';
 export { addDays, dayKey, dayNumber, hourOf, weekStartKey } from './time';
 export type { DayKey, SessionEvent } from './types';
 export { awardSessions, countsAsCompleted, isOpenEnded, rawSessionXp, sortByEnd, type SessionXp, type XpReason } from './xp';
+export {
+  evolutionFor,
+  FAMILIES,
+  FAMILY_KEYS,
+  familyForSkill,
+  familyLevels,
+  flowkeeperStatus,
+  ROCK_JOKES,
+  skillLevelsOf,
+  SPECIES,
+  stageForLevel,
+  stageName,
+  stageQuip,
+  type Evolution,
+  type FamilyDef,
+  type FamilyKey,
+  type FlowkeeperStatus,
+  type Stage,
+} from './evolution';

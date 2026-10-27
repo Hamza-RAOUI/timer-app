@@ -3,14 +3,15 @@ import React, { useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { MAX_CUSTOM_SKILLS, SAND_THEMES, SKILL_ICONS, SWATCH_KEYS, type IconName, type Skill, type SwatchKey } from '../../constants/focus';
 import { useActiveSkill, useSkills } from '../../hooks/useSkills';
-import { useProgress } from '../../lib/game';
-import { RPG_CONFIG, emptySkill } from '../../lib/rpg';
+import { useEvolution, useProgress } from '../../lib/game';
+import { FAMILIES, FAMILY_KEYS, RPG_CONFIG, emptySkill, familyLevels, skillLevelsOf, stageName, type Stage } from '../../lib/rpg';
 import { useSettingsStore } from '../../stores/settingsStore';
 import { useUiStore } from '../../stores/uiStore';
 import { makeStyles, useTheme } from '../../theme/ThemeProvider';
 import { fonts, hardTextShadow, SLANT, tabular, UNSLANT } from '../../theme/typography';
 import { formatMsHuman } from '../../utils/timeFormatter';
-import { ClassCharacter, classForSkill } from '../art/ClassCharacter';
+import { Critter } from '../art/Critter';
+import { EvolutionPanel } from '../art/EvolutionPanel';
 import { RankEmblem } from '../art/RankEmblem';
 import { SkillCrest } from '../art/SkillCrest';
 import { Card } from '../Card';
@@ -36,6 +37,7 @@ export const CharacterView: React.FC = () => {
           </Text>
         )}
         <HeroCard narrow={width < 640} />
+        <EvolutionCard />
         <StatTiles />
         <View style={[styles.cols, wide && styles.colsWide]}>
           <View style={[styles.col, wide && { flex: 1 }]}>
@@ -59,24 +61,25 @@ const HeroCard: React.FC<{ narrow: boolean }> = ({ narrow }) => {
   const p = useProgress();
   const toNext = p.level.xpForNext - p.level.xpIntoLevel;
   const skill = useActiveSkill();
-  const cls = classForSkill(skill.key);
+  const evo = useEvolution(skill.key);
   const [heroSize, setHeroSize] = useState({ w: 0, h: 0 });
   return (
     <View style={styles.hero}>
-      <View style={[styles.heroChar, narrow && { opacity: 0.3 }, { pointerEvents: 'none' }]} onLayout={(e) => setHeroSize({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height })}>
+      <View style={[styles.heroChar, narrow && { opacity: 0.3 }, narrow ? styles.noTouch : styles.boxNone]} onLayout={(e) => setHeroSize({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height })}>
         {heroSize.w > 0 && (
-          <ClassCharacter
+          <EvolutionPanel
             skillKey={skill.key}
             width={narrow ? heroSize.w : heroSize.w * 0.62}
             height={heroSize.h}
             fadeTo={t.colors.surface}
             showName={!narrow}
+            nameMaxWidth={heroSize.w * 0.36}
+            interactive={!narrow}
             style={{ alignSelf: 'flex-end' }}
-            label={`${cls.name}, the ${skill.label} class`}
           />
         )}
       </View>
-      <View style={[styles.heroBody, narrow ? styles.heroBodyNarrow : styles.heroBodyWide]}>
+      <View style={[styles.heroBody, narrow ? styles.heroBodyNarrow : styles.heroBodyWide, styles.boxNone]}>
         <RankEmblem title={p.title.title} size={narrow ? 104 : 124} label={`${p.title.title} rank emblem`} />
         <View style={[styles.heroText, narrow && { alignItems: 'center' }]}>
           <SkewTag label="Player" size="sm" color={t.colors.highlight} />
@@ -85,7 +88,7 @@ const HeroCard: React.FC<{ narrow: boolean }> = ({ narrow }) => {
           </Text>
           <Text style={styles.heroTitle}>{p.title.title}</Text>
           <Text style={[styles.heroClass, narrow && { textAlign: 'center' }]}>
-            Class · {cls.name} <Text style={{ color: t.colors.swatch[skill.swatch].text }}>({skill.label})</Text>
+            Creature · {evo.name} <Text style={{ color: t.colors.swatch[skill.swatch].text }}>({skill.label})</Text>
           </Text>
           <XpBar progress={p.level.progress} height={12} ticks={10} style={{ marginTop: 12, maxWidth: 420 }} label="Player XP" />
           <Text style={[styles.heroXp, tabular, narrow && { textAlign: 'center' }]}>
@@ -97,6 +100,75 @@ const HeroCard: React.FC<{ narrow: boolean }> = ({ narrow }) => {
         </View>
       </View>
     </View>
+  );
+};
+
+// ───────────── Evolution line ─────────────
+const STAGES: Stage[] = [1, 2, 3, 4, 5];
+
+const EvolutionCard: React.FC = () => {
+  const t = useTheme();
+  const styles = useStyles();
+  const p = useProgress();
+  const skill = useActiveSkill();
+  const evo = useEvolution(skill.key);
+  const preview = useUiStore((s) => s.devPreviewLevel);
+  const { width } = useWindowDimensions();
+  const thumb = width < 640 ? 64 : 92;
+  const fam = evo.family.key;
+  const levels = familyLevels(skillLevelsOf(p.skills));
+  const need = RPG_CONFIG.evolution.flowkeeperFamilyLevel;
+  const at = RPG_CONFIG.evolution.stageLevels;
+
+  return (
+    <Card padding={18} style={[styles.card, { marginTop: 14 }]} accent={t.colors.highlight}>
+      <SectionHeader
+        title={`${evo.family.line} line · ${skill.label}`}
+        right={<Text style={styles.meta}>{preview != null ? `Dev preview · LV ${preview}` : `Skill LV ${evo.skillLevel}`}</Text>}
+      />
+      <View style={styles.evoRow}>
+        {STAGES.map((st) => {
+          const reached = st <= evo.stage;
+          const current = st === evo.stage;
+          return (
+            <View
+              key={st}
+              style={[styles.evoCell, current && { borderColor: t.colors.accent, backgroundColor: t.colors.accentSoft }]}
+              accessible
+              accessibilityLabel={reached ? `Stage ${st}: ${stageName(fam, st)}${current ? ', current' : ''}` : `Stage ${st}: locked, skill level ${at[st - 1]}`}
+            >
+              <Critter family={fam} stage={st} size={thumb} silhouette={!reached} blink={current} />
+              <Text style={[styles.evoName, !reached && { color: t.colors.text.tertiary }]} numberOfLines={2}>
+                {reached ? stageName(fam, st) : '???'}
+              </Text>
+              <Text style={[styles.evoLv, tabular]}>{st === 5 ? `LV ${at[4]} + all` : `LV ${at[st - 1]}`}</Text>
+            </View>
+          );
+        })}
+      </View>
+      <Text style={styles.evoNext}>
+        {evo.next == null
+          ? 'Legendary form reached. The Flowkeeper bows to no deadline.'
+          : evo.next.needsAllFamilies
+            ? `Ready for the Flowkeeper — train every skill to LV ${need} to unlock it.`
+            : `Next: ${evo.next.name} at skill LV ${evo.next.level}.`}
+        {evo.stage === 3 || evo.stage === 4 ? '  Psst: rocks hate being poked.' : ''}
+      </Text>
+
+      <View style={styles.famRow}>
+        {FAMILY_KEYS.map((f) => {
+          const ok = preview != null ? preview >= need : levels[f] >= need;
+          return (
+            <View key={f} style={[styles.famChip, ok && { borderColor: t.colors.gold }]}>
+              <Ionicons name={ok ? 'checkmark-circle' : 'ellipse-outline'} size={14} color={ok ? t.colors.goldText : t.colors.text.tertiary} />
+              <Text style={styles.famText}>
+                {FAMILIES[f].line} <Text style={tabular}>{Math.min(preview ?? levels[f], need)}/{need}</Text>
+              </Text>
+            </View>
+          );
+        })}
+      </View>
+    </Card>
   );
 };
 
@@ -410,10 +482,21 @@ const useStyles = makeStyles((t) => ({
   meta: { fontFamily: fonts.medium, fontSize: 12, color: t.colors.text.tertiary },
   link: { fontFamily: fonts.semibold, fontSize: 13, color: t.colors.accentText },
 
+  evoRow: { flexDirection: 'row', gap: 8, marginTop: 6 },
+  evoCell: { flex: 1, alignItems: 'center', paddingVertical: 10, paddingHorizontal: 4, borderRadius: 14, borderWidth: 1, borderColor: t.colors.border, backgroundColor: t.colors.surfaceAlt, gap: 4 },
+  evoName: { fontFamily: fonts.semibold, fontSize: 12, color: t.colors.text.primary, textAlign: 'center', minHeight: 30 },
+  evoLv: { fontFamily: fonts.display, fontSize: 10.5, letterSpacing: 0.8, color: t.colors.text.tertiary, textTransform: 'uppercase' },
+  evoNext: { fontFamily: fonts.body, fontSize: 13, color: t.colors.text.secondary, marginTop: 12 },
+  famRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
+  famChip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, height: 30, borderRadius: 15, borderWidth: 1, borderColor: t.colors.border },
+  famText: { fontFamily: fonts.semibold, fontSize: 12, color: t.colors.text.secondary },
   hero: { borderRadius: 22, overflow: 'hidden', borderWidth: 1, borderColor: t.colors.border, backgroundColor: t.colors.surface, ...t.shadow.md },
   heroBody: { flexDirection: 'row', alignItems: 'center', gap: 22, padding: 24, minHeight: 230 },
   heroBodyNarrow: { flexDirection: 'column', gap: 12, minHeight: 340, justifyContent: 'center' },
   heroBodyWide: { paddingRight: '40%' },
+  // Must live in the stylesheet: RNW only polyfills 'box-none' for compiled styles.
+  boxNone: { pointerEvents: 'box-none' },
+  noTouch: { pointerEvents: 'none' },
   heroChar: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
   heroClass: { fontFamily: fonts.semibold, fontSize: 12.5, color: t.colors.text.secondary, marginTop: 4 },
   heroText: { flex: 1, alignSelf: 'stretch', justifyContent: 'center' },
