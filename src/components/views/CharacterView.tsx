@@ -147,7 +147,7 @@ const EvolutionCard: React.FC = () => {
               accessibilityState={reached ? { checked: current } : { disabled: true }}
               accessibilityLabel={reached ? `${stageName(fam, st)}${current ? ', shown' : ', tap to show'}` : `Locked form, skill level ${at[st - 1]}`}
             >
-              <Critter family={fam} stage={st} size={thumb} silhouette={!reached} blink={current} />
+              <Critter family={fam} stage={st} size={thumb} silhouette={!reached} />
               <Text style={[styles.evoName, !reached && { color: t.colors.text.tertiary }]} numberOfLines={2}>
                 {reached ? stageName(fam, st) : '???'}
               </Text>
@@ -228,7 +228,7 @@ const QuestsCard: React.FC = () => {
       {!isPro && (
         <Pressable onPress={() => openPro('quests')} style={styles.inlineCta} accessibilityRole="button">
           <Ionicons name="sparkles" size={14} color={t.colors.highlightText} />
-          <Text style={styles.inlineCtaText}>Weekly quests are part of Founding Pro · +{RPG_CONFIG.quests.weeklyReward} XP each</Text>
+          <Text style={styles.inlineCtaText}>Weekly quests come with Pro (coming soon) · +{RPG_CONFIG.quests.weeklyReward} XP each</Text>
         </Pressable>
       )}
     </Card>

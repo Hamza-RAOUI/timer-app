@@ -189,7 +189,7 @@ export const TERMS: LegalDoc = {
       title: 'Pro',
       blocks: [
         {
-          p: 'Pro is not for sale on the website. The “Founding Pro — I’m interested” button only records anonymous interest; it is not an order and creates no obligation for you or for us.',
+          p: 'Pro is not for sale on the website. The “I’m interested” button on the “Pro · coming soon” sheet only records anonymous interest; it is not an order and creates no obligation for you or for us.',
         },
         {
           p: 'If Pro becomes available as an in-app purchase, it will be an auto-renewing monthly subscription that unlocks the listed extras on the store account you subscribe with. The price is always shown before you confirm. It renews each month at the same price until you cancel; you can cancel anytime in your App Store or Google Play subscription settings, at least 24 hours before the renewal date, and keep Pro until the end of the period you paid for. If we ever change the price, the store will tell you in advance and ask for your consent where required. Payments are processed by Apple or Google under their terms; see the Refund Policy for refunds.',
@@ -261,7 +261,7 @@ export const REFUNDS: LegalDoc = {
       title: 'On the website',
       blocks: [
         {
-          p: 'No payments are taken on the website. “Founding Pro — coming soon” only measures interest; pressing “I’m interested” never charges you, so there is nothing to refund.',
+          p: 'No payments are taken on the website. “Pro · coming soon” only measures interest; pressing “I’m interested” never charges you, so there is nothing to refund.',
         },
       ],
     },
@@ -364,7 +364,7 @@ export const LEGAL_NOTICE: LegalDoc = {
           list: [
             'Inter typeface by Rasmus Andersson — SIL Open Font License 1.1 (bundled via @expo-google-fonts/inter, MIT).',
             'Ionicons by Ionic — MIT License (via @expo/vector-icons).',
-            'Hourglass, rank emblems, skill crests, scenery, the evolving creatures and the Timekeeper logo — original artwork drawn in code for Flowglass.',
+            'Hourglass, rank emblems, skill crests and scenery — original artwork drawn in code for Flowglass. The evolving creatures and the Timekeeper mascot — original art made for Flowglass.',
             'Ambience and lo-fi tracks — recordings from Pixabay (Pixabay Content License), trimmed and looped for Flowglass. Sources are listed in public/audio/CREDITS.md.',
           ],
         },

@@ -123,7 +123,7 @@ export const EvolutionPanel: React.FC<EvolutionPanelProps> = ({ skillKey, width,
   };
 
   const ink = t.isDark ? '#F2F4FF' : '#14112B';
-  const creatureNode = <Critter family={evo.family.key} stage={evo.stage} size={size} browRaise={browRaise} blink={!reduced} />;
+  const creatureNode = <Critter family={evo.family.key} stage={evo.stage} size={size} browRaise={browRaise} />;
   const fill = { position: 'absolute' as const, left: 0, top: 0, width, height };
 
   return (

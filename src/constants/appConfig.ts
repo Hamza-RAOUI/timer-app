@@ -8,7 +8,7 @@ export const FEATURES = {
    * Real in-app purchases through RevenueCat (entitlement `pro`), native only.
    * Off until `react-native-purchases` is installed and wired in
    * `src/lib/purchases.ts`; while off, every Pro prompt shows the
-   * "Founding Pro — coming soon" fake door. Web never takes payments in this build.
+   * "Pro · coming soon" sheet. Web never takes payments in this build.
    */
   payments: false,
   /**

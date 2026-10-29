@@ -83,7 +83,7 @@ export const StatisticsView: React.FC = () => {
           <Pressable onPress={() => openPro('stats')} style={styles.freeNote} accessibilityRole="button">
             <Ionicons name="time-outline" size={14} color={t.colors.text.tertiary} />
             <Text style={styles.freeNoteText}>
-              Free shows your last {RPG_CONFIG.freeStatsDays} days. Full history (Month, Year) comes with Founding Pro — your sessions are all kept.
+              Free shows your last {RPG_CONFIG.freeStatsDays} days. Full history (Month, Year) comes with Pro (coming soon) — your sessions are all kept.
             </Text>
           </Pressable>
         )}

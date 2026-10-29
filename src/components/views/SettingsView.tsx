@@ -150,9 +150,9 @@ export const SettingsView: React.FC = () => {
               <Ionicons name="sparkles" size={18} color={t.colors.highlightText} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.rowLabel}>{settings.isPro ? 'Pro unlocked' : 'Founding Pro'}</Text>
+              <Text style={styles.rowLabel}>{settings.isPro ? 'Pro unlocked' : 'Pro · coming soon'}</Text>
               <Text style={styles.rowDesc}>
-                {settings.isPro ? 'Soundscapes, full history, weekly quests, custom skills and every sand.' : 'Soundscapes, more characters, insights. $1.99 a month, coming soon.'}
+                {settings.isPro ? 'Soundscapes, full history, weekly quests, custom skills and every sand.' : 'More soundscapes, full history, custom skills. $1.99 a month, not for sale yet.'}
               </Text>
             </View>
             <Pressable onPress={() => openPro('settings')} style={styles.smallBtn} accessibilityRole="button">

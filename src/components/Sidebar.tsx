@@ -245,7 +245,7 @@ export const Sidebar: React.FC<{ onCollapse?: () => void }> = ({ onCollapse }) =
         ) : (
           <Pressable onPress={() => openPro('sidebar')} style={styles.proLink} accessibilityRole="button">
             <Ionicons name="sparkles" size={14} color={t.colors.highlightText} />
-            <Text style={styles.proLinkText}>Founding Pro</Text>
+            <Text style={styles.proLinkText}>Pro · Soon</Text>
           </Pressable>
         )}
       </View>
