@@ -118,7 +118,7 @@ const EvolutionCard: React.FC = () => {
   const thumb = width < 640 ? 64 : 92;
   const fam = evo.family.key;
   const levels = familyLevels(skillLevelsOf(p.skills));
-  const need = RPG_CONFIG.evolution.flowkeeperFamilyLevel;
+  const need = RPG_CONFIG.evolution.timekeeperFamilyLevel;
   const at = RPG_CONFIG.evolution.stageLevels;
 
   return (
@@ -147,7 +147,7 @@ const EvolutionCard: React.FC = () => {
               accessibilityState={reached ? { checked: current } : { disabled: true }}
               accessibilityLabel={reached ? `${stageName(fam, st)}${current ? ', shown' : ', tap to show'}` : `Locked form, skill level ${at[st - 1]}`}
             >
-              <Critter family={fam} stage={st} size={thumb} silhouette={!reached} blink={current} />
+              <Critter family={fam} stage={st} size={thumb} silhouette={!reached} />
               <Text style={[styles.evoName, !reached && { color: t.colors.text.tertiary }]} numberOfLines={2}>
                 {reached ? stageName(fam, st) : '???'}
               </Text>
@@ -158,9 +158,9 @@ const EvolutionCard: React.FC = () => {
       </View>
       <Text style={styles.evoNext}>
         {evo.next == null
-          ? 'Legendary form reached. The Flowkeeper bows to no deadline.'
+          ? 'Legendary form reached. The Timekeeper bows to no deadline.'
           : evo.next.needsAllFamilies
-            ? `Ready for the Flowkeeper — train every skill to LV ${need} to unlock it.`
+            ? `Ready for the Timekeeper — train every skill to LV ${need} to unlock it.`
             : `Next: ${evo.next.name} at skill LV ${evo.next.level}.`}
         {evo.stage === 3 || evo.stage === 4 ? '  Psst: rocks hate being poked.' : ''}
       </Text>
@@ -228,7 +228,7 @@ const QuestsCard: React.FC = () => {
       {!isPro && (
         <Pressable onPress={() => openPro('quests')} style={styles.inlineCta} accessibilityRole="button">
           <Ionicons name="sparkles" size={14} color={t.colors.highlightText} />
-          <Text style={styles.inlineCtaText}>Weekly quests are part of Founding Pro · +{RPG_CONFIG.quests.weeklyReward} XP each</Text>
+          <Text style={styles.inlineCtaText}>Weekly quests come with Pro (coming soon) · +{RPG_CONFIG.quests.weeklyReward} XP each</Text>
         </Pressable>
       )}
     </Card>

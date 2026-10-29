@@ -150,9 +150,9 @@ export const SettingsView: React.FC = () => {
               <Ionicons name="sparkles" size={18} color={t.colors.highlightText} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.rowLabel}>{settings.isPro ? 'Pro unlocked' : 'Founding Pro'}</Text>
+              <Text style={styles.rowLabel}>{settings.isPro ? 'Pro unlocked' : 'Pro · coming soon'}</Text>
               <Text style={styles.rowDesc}>
-                {settings.isPro ? 'Soundscapes, full history, weekly quests, custom skills and every sand.' : 'Soundscapes, more characters, insights. $1.99 a month, coming soon.'}
+                {settings.isPro ? 'Soundscapes, full history, weekly quests, custom skills and every sand.' : 'More soundscapes, full history, custom skills. $1.99 a month, not for sale yet.'}
               </Text>
             </View>
             <Pressable onPress={() => openPro('settings')} style={styles.smallBtn} accessibilityRole="button">
@@ -279,10 +279,10 @@ export const SettingsView: React.FC = () => {
         )}
 
         <View style={styles.about}>
-          <FlowglassMark size={56} label="Flowglass logo: the Flowkeeper" />
+          <FlowglassMark size={56} label="Flowglass logo: the Timekeeper" />
           <Text style={styles.aboutName}>Flowglass</Text>
           <Text style={styles.aboutVer}>v{APP_VERSION} · flow + hourglass</Text>
-          <Text style={styles.aboutCredits}>Inter typeface (SIL Open Font License 1.1) · Ionicons (MIT) · all illustrations, creatures and the Flowkeeper logo are original</Text>
+          <Text style={styles.aboutCredits}>Inter typeface (SIL Open Font License 1.1) · Ionicons (MIT) · all illustrations, creatures and the Timekeeper logo are original</Text>
         </View>
       </ScrollView>
     </View>

@@ -7,7 +7,8 @@
  *   node scripts/setup-supabase-email.mjs
  *
  * Optional: SENDER_EMAIL (default onboarding@resend.dev — Resend then only delivers
- * to your own Resend account email until you verify a domain).
+ * to your own Resend account email until you verify a domain). To switch to a verified
+ * domain later, rerun with SENDER_EMAIL and press Enter at the Resend key prompt.
  * Secrets are read from the environment and never printed.
  */
 import { createInterface } from 'node:readline';
@@ -20,7 +21,8 @@ const askHidden = (question) =>
     if (!process.stdin.isTTY) return resolve('');
     const rl = createInterface({ input: process.stdin, output: process.stdout, terminal: true });
     rl._writeToOutput = (s) => {
-      if (s.startsWith(question)) process.stdout.write(s); // show the prompt, hide the typing
+      // Readline redraws "prompt + typed text" on paste: show only the prompt part.
+      if (s.startsWith(question)) process.stdout.write(question);
     };
     rl.question(question, (answer) => {
       rl.close();
@@ -30,11 +32,11 @@ const askHidden = (question) =>
   });
 
 const token = process.env.SUPABASE_ACCESS_TOKEN || (await askHidden('Supabase access token (sbp_…, hidden): '));
-const resendKey = process.env.RESEND_API_KEY || (await askHidden('Resend API key (re_…, hidden): '));
+const resendKey = process.env.RESEND_API_KEY || (await askHidden('Resend API key (re_…, hidden — Enter keeps the saved one): '));
 const sender = process.env.SENDER_EMAIL || 'onboarding@resend.dev';
 
-if (!token || !resendKey) {
-  console.error('Need both a Supabase access token and a Resend API key (see the comment at the top).');
+if (!token) {
+  console.error('Need a Supabase access token (see the comment at the top).');
   process.exit(1);
 }
 
@@ -48,7 +50,8 @@ const config = {
   smtp_host: 'smtp.resend.com',
   smtp_port: '465',
   smtp_user: 'resend',
-  smtp_pass: resendKey,
+  // Left out when empty, so Supabase keeps the key it already has.
+  ...(resendKey && { smtp_pass: resendKey }),
   rate_limit_email_sent: 100,
   mailer_subjects_magic_link: 'Your Flowglass code',
   mailer_templates_magic_link_content: body,

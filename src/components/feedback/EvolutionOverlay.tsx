@@ -60,7 +60,7 @@ const EvolutionContent: React.FC = () => {
 
         <View style={styles.stage}>
           <Animated.View style={oldStyle}>
-            <Critter family={evo.family} stage={evo.from} size={96} blink={false} />
+            <Critter family={evo.family} stage={evo.from} size={96} />
           </Animated.View>
           <Ionicons name="chevron-forward" size={26} color={t.colors.text.tertiary} />
           <Animated.View style={newStyle}>

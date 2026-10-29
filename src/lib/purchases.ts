@@ -5,7 +5,7 @@
  * installed yet (it's a native module that needs a dev build and would break
  * the web/Expo Go bundle), so the calls below are stubs behind
  * `FEATURES.payments`. While that flag is off — and always on web — every Pro
- * prompt shows the "Founding Pro — coming soon" fake door instead.
+ * prompt shows the "Pro · coming soon" sheet instead.
  *
  * To go live on native:
  *   1. `npx expo install react-native-purchases` and create a dev build.

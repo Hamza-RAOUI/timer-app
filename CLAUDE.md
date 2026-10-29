@@ -68,9 +68,9 @@ Dev-only testing aid: `http://localhost:8081/?devspeed=60` runs timers 60× fast
   Inter Black for game headings; `SLANT`/`UNSLANT` + `hardTextShadow` for the look.
 - **Game UI** (`src/components/game/`, `art/`, `feedback/`): SkewTag, XpBar,
   SectionHeader, QuestRow, GhostWord, StripeField; original SVG art (RankEmblem,
-  SkillCrest, SandScene); `Critter` — the evolving creature (4 families × 5 stages,
-  Grain → Pebble → Rock → Monolith → Flowkeeper), shown by `EvolutionPanel` behind the
-  timer and in the Character hero; `FlowglassMark` — the logo (keep `public/favicon.svg` in sync);
+  SkillCrest, SandScene); `Critter` — the evolving creature (painted art, 4 families × 5 stages,
+  Grain → Pebble → Rock → Monolith → Timekeeper), shown by `EvolutionPanel` behind the
+  timer and in the Character hero; `FlowglassMark` — the logo (`assets/images/logo.png`; icons/favicon are cut from the same mascot art);
   RewardPanel, LevelUpOverlay, ToastStack, ProSheet,
   ConsentBanner.
 - **Analytics** (`src/lib/analytics.ts`): Vercel Web Analytics, web only, cookieless.
@@ -84,7 +84,7 @@ Dev-only testing aid: `http://localhost:8081/?devspeed=60` runs timers 60× fast
   `supabase/migrations/`. UI state in `accountStore`. The client is created lazily —
   never at import (the static render has no storage).
 - **Pro** (`src/lib/purchases.ts`): $1.99/month subscription, RevenueCat entitlement `pro`,
-  stubbed behind `FEATURES.payments` (off → "Founding Pro" fake door everywhere).
+  stubbed behind `FEATURES.payments` (off → "Pro · coming soon" sheet everywhere).
 - **Widget** (`widget/`): native home-screen widget injected at `expo prebuild` by
   `widget/plugin/withTempoWidget.js`. JS↔native sync is `src/widget/widgetBridge.ts`.
 
@@ -125,7 +125,9 @@ Dev-only testing aid: `http://localhost:8081/?devspeed=60` runs timers 60× fast
   don't add it again. `useAnimatedStyle`/`useSharedValue` callbacks are auto-worklets.
 - **react-native-purchases is not installed**; see the go-live steps in
   `src/lib/purchases.ts`. Vercel custom events need a Vercel plan that supports them.
-- **Creatures are original vector art** (`src/components/art/Critter.tsx`); evolution rules
+- **Creatures are painted PNG/WebP art** in `assets/images/creatures/` (`<family>-<stage>.webp`,
+  512px, transparent; `timekeeper.webp` is the stage-5 mascot with a soft round fade), drawn
+  by `src/components/art/Critter.tsx`; evolution rules
   live in `src/lib/rpg/evolution.ts` (thresholds in `config.ts`). Never add characters,
   faces or catchphrases from existing anime/games/celebrities — the app sells Pro, so it's
   a takedown risk (the Rock easter egg uses original jokes only). Painted-art prompts:

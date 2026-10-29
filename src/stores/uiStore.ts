@@ -14,7 +14,7 @@ interface UiState {
   sidebarCollapsed: boolean;
   /** Set when a deep link / widget asks to auto-start a session. */
   pendingStart: boolean;
-  /** Pro sheet (purchase on native, "Founding Pro" fake door on web). */
+  /** Pro sheet (purchase on native, "Pro · coming soon" otherwise). */
   proSheet: ProSource | null;
   /** Local calendar day — ticks over at midnight so daily quests/streaks refresh. */
   today: string;

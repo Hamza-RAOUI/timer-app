@@ -12,7 +12,7 @@ export {
   FAMILY_KEYS,
   familyForSkill,
   familyLevels,
-  flowkeeperStatus,
+  timekeeperStatus,
   ROCK_JOKES,
   skillLevelsOf,
   SPECIES,
@@ -21,6 +21,6 @@ export {
   type Evolution,
   type FamilyDef,
   type FamilyKey,
-  type FlowkeeperStatus,
+  type TimekeeperStatus,
   type Stage,
 } from './evolution';

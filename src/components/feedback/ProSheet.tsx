@@ -14,17 +14,17 @@ import { SandScene } from '../art/SandScene';
 import { SkewTag } from '../game/SkewTag';
 
 const PERKS: { icon: React.ComponentProps<typeof Ionicons>['name']; title: string; body: string; soon?: boolean }[] = [
-  { icon: 'musical-notes', title: 'Focus soundscapes', body: 'Rain, waves and night ambience while you work (brown noise stays free)' },
-  { icon: 'people', title: 'More classes & art', body: 'New characters and art packs for your skills', soon: true },
+  { icon: 'musical-notes', title: 'More soundscapes', body: 'Waves, night, café, fireplace and two lo-fi tracks (brown noise and rain stay free)' },
+  { icon: 'people', title: 'More creatures', body: 'New creature families for your custom skills', soon: true },
   { icon: 'analytics', title: 'Insights', body: 'Focus heatmap, your best hours and weekly reports', soon: true },
   { icon: 'stats-chart', title: 'Full stats history', body: `Month and year views (free shows the last ${RPG_CONFIG.freeStatsDays} days)` },
   { icon: 'trophy', title: 'Weekly quests & streak freeze', body: `+${RPG_CONFIG.quests.weeklyReward} XP quests every week, and a freeze for a missed day` },
-  { icon: 'color-palette', title: 'Custom skills & every sand', body: 'Rename and add skills, unlock all hourglass themes' },
+  { icon: 'color-palette', title: 'Custom skills & every sand', body: 'Rename and add your own skills, unlock all hourglass themes' },
 ];
 
 /**
  * Pro prompt. Native with payments on → real checkout (RevenueCat, entitlement `pro`).
- * Otherwise → the "Founding Pro — coming soon" fake door, which only records
+ * Otherwise → the "Pro · coming soon" sheet, which only records
  * anonymous interest (`pro_interest_clicked`). No payment is ever taken here.
  */
 export const ProSheet: React.FC = () => {
@@ -70,7 +70,7 @@ const ProSheetBody: React.FC<{ source: string; onClose: () => void }> = ({ sourc
           <View>
             <SandScene height={130} sand={sandThemeByKey(sandKey).colors} label="Illustration: an hourglass on the dunes" />
             <View style={styles.heroTag}>
-              <SkewTag label={canBuy || isPro ? 'Flowglass Pro' : 'Founding Pro'} size="lg" color={t.colors.highlight} shadowColor={t.colors.accent} />
+              <SkewTag label={canBuy || isPro ? 'Flowglass Pro' : 'Pro · Coming soon'} size="lg" color={t.colors.highlight} shadowColor={t.colors.accent} />
             </View>
             <Pressable onPress={onClose} style={styles.close} accessibilityRole="button" accessibilityLabel="Close">
               <Ionicons name="close" size={18} color="#FFFFFF" />
@@ -112,7 +112,7 @@ const ProSheetBody: React.FC<{ source: string; onClose: () => void }> = ({ sourc
                   {price}
                   <Text style={styles.pricePer}> / {PRO.period}</Text>
                 </Text>
-                <Text style={styles.priceNote}>{canBuy ? 'renews monthly · cancel anytime' : 'planned founding price · cancel anytime'}</Text>
+                <Text style={styles.priceNote}>{canBuy ? 'renews monthly · cancel anytime' : 'planned price · cancel anytime'}</Text>
               </View>
             )}
 

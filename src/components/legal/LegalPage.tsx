@@ -8,7 +8,8 @@ import { SITE_URL } from '../../constants/appConfig';
 import { LEGAL_ENTITY } from '../../constants/legal';
 import { LEGAL_DOCS, type LegalDoc } from '../../content/legal';
 import { makeStyles, useTheme } from '../../theme/ThemeProvider';
-import { fonts, SLANT, UNSLANT } from '../../theme/typography';
+import { fonts } from '../../theme/typography';
+import { FlowglassMark } from '../art/FlowglassMark';
 import { SectionHeader } from '../game/SectionHeader';
 
 /** Shared layout for the privacy / terms / refunds / cookies / legal pages. */
@@ -28,11 +29,7 @@ export const LegalPage: React.FC<{ doc: LegalDoc }> = ({ doc }) => {
         <View style={styles.topbar}>
           <Link href="/" style={styles.brandLink} accessibilityLabel="Flowglass home">
             <View style={styles.brandRow}>
-              <View style={styles.logo}>
-                <View style={{ transform: [{ skewX: UNSLANT }] }}>
-                  <Ionicons name="hourglass" size={15} color={t.colors.text.onAccent} />
-                </View>
-              </View>
+              <FlowglassMark size={32} />
               <Text style={styles.brand}>Flowglass</Text>
             </View>
           </Link>
@@ -99,7 +96,6 @@ const useStyles = makeStyles((t) => ({
   topbar: { width: '100%', maxWidth: 760, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 18 },
   brandLink: { textDecorationLine: 'none' },
   brandRow: { flexDirection: 'row', alignItems: 'center', gap: 9 },
-  logo: { width: 30, height: 30, borderRadius: 8, backgroundColor: t.colors.accent, alignItems: 'center', justifyContent: 'center', transform: [{ skewX: SLANT }] },
   brand: { fontFamily: fonts.display, fontSize: 17, letterSpacing: 1.4, color: t.colors.text.primary, textTransform: 'uppercase' },
   openApp: { paddingVertical: 8, paddingHorizontal: 14, borderRadius: 12, backgroundColor: t.colors.accentSoft, textDecorationLine: 'none' },
   openAppText: { fontFamily: fonts.semibold, fontSize: 13, color: t.colors.accentText },
