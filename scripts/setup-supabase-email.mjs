@@ -40,6 +40,22 @@ if (!token) {
   process.exit(1);
 }
 
+// Prove the Resend key can send from this sender before handing it to Supabase
+// (Supabase only ever says "Error sending confirmation email").
+if (resendKey) {
+  const test = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: `Flowglass <${sender}>`, to: 'delivered@resend.dev', subject: 'Flowglass key check', text: 'ok' }),
+  });
+  if (!test.ok) {
+    const { message } = await test.json().catch(() => ({}));
+    console.error(`Resend rejected the key (${test.status}): ${message ?? 'no details'}. Nothing was saved.`);
+    process.exit(1);
+  }
+  console.log('✓ Resend key can send from', sender);
+}
+
 const body = `<h2>Your Flowglass code</h2>
 <p>Enter this code in the app: <strong>{{ .Token }}</strong></p>
 <p>Or <a href="{{ .ConfirmationURL }}">tap here to sign in</a>.</p>`;
